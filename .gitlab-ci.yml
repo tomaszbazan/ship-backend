@@ -19,7 +19,7 @@ variables:
 
   SONAR_PROJECT: ship-backend
   SONAR_URL: https://sonar.bazan.tk
-  SONAR_API_KEY: dc55c525cfc81a3d65ee2f6ac11e70a967973c56
+  SONAR_API_KEY: eed217d41226b4b5a467ebc5415c8540f1262aba
 
   NAMESPACE: todoistcalendar
   K8S_CONTEXT: kubernetes-admin@k8s-hetzner
