@@ -1,0 +1,19 @@
+replicaCount: 2
+
+springprofile: prd
+
+image:
+  repository: registry.gitlab.com/tomasz.bazan.89/ship-backend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+host: ship-backend.bazan.tk
+
+service:
+  port: 80
+  targetPort: 8080
+  name: ship-backend
+
+prometheus:
+  enableScraping: true
+  path: /actuator/prometheus

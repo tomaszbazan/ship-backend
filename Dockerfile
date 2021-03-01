@@ -1,10 +1,7 @@
-FROM maven:3-jdk-8-alpine
+FROM openjdk:8-jre-slim
 
-WORKDIR /usr/src/app
+RUN mkdir /app
+COPY /target/*.jar /app/app.jar
+COPY /src/main/resources/StoredCredential /app/StoredCredential
 
-COPY . /usr/src/app
-RUN mvn package
-
-ENV PORT 5000
-EXPOSE $PORT
-CMD [ "sh", "-c", "mvn -Dserver.port=${PORT} spring-boot:run" ]
+ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/app.jar"]
