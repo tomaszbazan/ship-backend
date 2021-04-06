@@ -23,7 +23,7 @@ spec:
         prometheus.io/path: "{{.Values.prometheus.path}}"
     spec:
       imagePullSecrets:
-        - name: regcred-gitlab
+        - name: regcredb-gitlab
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
