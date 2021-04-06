@@ -19,7 +19,7 @@ public class HelloControllerTest {
     @Test
     public void shouldResponseHelloOnRootPath() {
         // given
-        String rootPath = "/";
+        String rootPath = "/asdf@asdf.pl";
 
         // when
         String body = this.restTemplate.getForObject(rootPath, String.class);

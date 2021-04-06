@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.*;
 public class ShipApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ShipApplication.class, args);
+		createSpringApplication().run(args);
+	}
+
+	public static SpringApplication createSpringApplication() {
+		return new SpringApplication(ShipApplication.class);
 	}
 }
