@@ -58,7 +58,7 @@ deploy:
     - cp $KUBECONFIG /root/.kube/config
   script:
     - "sed -i \"s/tag: .*/tag: $CI_COMMIT_SHA/g\" $SOURCE/values.yaml"
-    - DEPLOY_EXIST=$(helm list -n $NAMESPACE -q)
+    - DEPLOY_EXIST=$(helm list -n $NAMESPACE --filter $(echo "$CI_PROJECT_NAME" | awk '{print tolower($0)}') -q)
     - if [ -z "$DEPLOY_EXIST" ]; then kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -; fi
     - if [ -z "$DEPLOY_EXIST" ]; then kubectl create secret docker-registry regcred-gitlab --namespace=$NAMESPACE --docker-server=registry.gitlab.com --docker-username=gitlab-deploy-token --docker-password=$REPOSITORY_TOKEN; fi
     - if [ -z "$DEPLOY_EXIST" ]; then helm install $(echo "$CI_PROJECT_NAME" | awk '{print tolower($0)}') --namespace=$NAMESPACE --create-namespace $SOURCE; else helm upgrade $(echo "$CI_PROJECT_NAME" | awk '{print tolower($0)}') --namespace=$NAMESPACE --create-namespace $SOURCE; fi
