@@ -17,8 +17,14 @@ public class HelloControllerTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void homeResponse() {
-        String body = this.restTemplate.getForObject("/", String.class);
+    public void shouldResponseHelloOnRootPath() {
+        // given
+        String rootPath = "/";
+
+        // when
+        String body = this.restTemplate.getForObject(rootPath, String.class);
+
+        // then
         assertThat(body).isEqualTo("Hello");
     }
 }

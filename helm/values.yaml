@@ -7,8 +7,6 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
-host: ship-backend.bazan.tk
-
 service:
   port: 80
   targetPort: 8080
