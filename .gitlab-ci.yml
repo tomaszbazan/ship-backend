@@ -21,7 +21,7 @@ variables:
   SONAR_URL: https://sonar.bazan.tk
   SONAR_API_KEY: eed217d41226b4b5a467ebc5415c8540f1262aba
 
-  NAMESPACE: todoistcalendar
+  NAMESPACE: ships
   K8S_CONTEXT: kubernetes-admin@k8s-hetzner
 
   SOURCE: "/builds/tomasz.bazan.89/ship-backend/helm/"
