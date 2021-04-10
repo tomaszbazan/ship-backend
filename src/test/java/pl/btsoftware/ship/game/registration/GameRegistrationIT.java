@@ -6,6 +6,8 @@ import pl.btsoftware.ship.IntegrationTest;
 
 import java.time.LocalDate;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class GameRegistrationIT extends IntegrationTest {
     @Autowired
     private RegisterRestController registerRestController;
@@ -13,11 +15,17 @@ class GameRegistrationIT extends IntegrationTest {
     @Test
     void shouldCorrectlyJoinToNewGame() {
         // given
+        PlayerName playerName = new PlayerName("PlayerOne");
         GameName gameName = registerGame();
+        JoinRequest joinRequest = new JoinRequest(playerName.getName(), "anyPassword");
 
         // when
+        PlayerJoined playerJoined = registerRestController.joinGame(gameName.getName(), joinRequest);
 
         // then
+        assertThat(playerJoined.getPlayerName()).isEqualTo(playerName);
+        assertThat(playerJoined.getGameName()).isEqualTo(gameName);
+        assertThat(playerJoined.getCountry()).isEqualTo(Country.JAMAICA);
     }
 
     private GameName registerGame() {
