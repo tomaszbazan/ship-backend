@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity(name = "player")

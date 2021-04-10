@@ -12,13 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = TestController.class)
-public class TestControllerTest {
+class TestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void shouldResponseHelloOnRootPath() throws Exception {
+    void shouldResponseHelloOnRootPath() throws Exception {
         // given
         String path = "/";
 

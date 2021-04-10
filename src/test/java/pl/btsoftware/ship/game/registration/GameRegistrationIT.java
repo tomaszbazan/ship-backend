@@ -6,7 +6,7 @@ import pl.btsoftware.ship.IntegrationTest;
 
 import java.time.LocalDate;
 
-public class GameRegistrationIT extends IntegrationTest {
+class GameRegistrationIT extends IntegrationTest {
     @Autowired
     private RegisterRestController registerRestController;
 

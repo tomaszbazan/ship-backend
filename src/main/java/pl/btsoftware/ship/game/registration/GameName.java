@@ -7,7 +7,6 @@ import lombok.NonNull;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Embeddable
 @NoArgsConstructor
