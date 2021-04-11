@@ -2,6 +2,7 @@ package pl.btsoftware.ship.game.registration;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -31,7 +32,7 @@ public class GameEntity {
     GameEntity(GameRequest gameRequest) {
         setId(new GameId(UUID.randomUUID()));
         setName(new GameName(gameRequest.getGameName()));
-        setPassword(gameRequest.getPassword());
+        setPassword(DigestUtils.sha256Hex(gameRequest.getPassword()));
         setStartDate(gameRequest.getStartDate());
     }
 }
