@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class JoinRequest {
     String playerName;
     String password;
+    String gamePassword;
 }

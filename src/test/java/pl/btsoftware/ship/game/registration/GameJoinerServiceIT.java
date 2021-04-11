@@ -25,7 +25,7 @@ class GameJoinerServiceIT extends IntegrationTest {
         String password = "hardPassword!23aDASdzxc123))***";
         GameName gameName = new GameName("anyGame");
         gameRepository.save(GameFixture.game(gameName));
-        JoinRequest joinRequest = new JoinRequest("anyName", password);
+        JoinRequest joinRequest = new JoinRequest("anyName", password, "anyGamePassword");
 
         // when
         PlayerJoined playerJoined = gameJoinerService.joinPlayer(gameName, joinRequest);

@@ -73,7 +73,8 @@ class RegisterRestControllerTest {
         String path = "/game/" + gameName + "/player";
         String joinRequest = "{\n" +
                 "   \"playerName\":\"" + playerName + "\",\n" +
-                "   \"password\":\"any\"\n" +
+                "   \"password\":\"any\",\n" +
+                "   \"gamePassword\":\"any\"\n" +
                 "}";
         when(gameJoinerService.joinPlayer(any(), any())).thenReturn(new PlayerJoined(new PlayerName(playerName), new GameName(gameName), Country.JAMAICA));
 
@@ -96,7 +97,8 @@ class RegisterRestControllerTest {
         String path = "/game/" + gameName + "/player";
         String joinRequest = "{\n" +
                 "   \"playerName\":\"" + playerName + "\",\n" +
-                "   \"password\":\"any\"\n" +
+                "   \"password\":\"any\",\n" +
+                "   \"gamePassword\":\"any\"\n" +
                 "}";
         when(gameJoinerService.joinPlayer(any(), any())).thenThrow(GameNotExistsException.class);
 
@@ -113,9 +115,28 @@ class RegisterRestControllerTest {
         String path = "/game/" + gameName + "/player";
         String joinRequest = "{\n" +
                 "   \"playerName\":\"" + playerName + "\",\n" +
-                "   \"password\":\"any\"\n" +
+                "   \"password\":\"any\",\n" +
+                "   \"gamePassword\":\"any\"\n" +
                 "}";
         when(gameJoinerService.joinPlayer(any(), any())).thenThrow(MaximumPlayersInGameException.class);
+
+        // when & then
+        mockMvc.perform(post(path).content(joinRequest).contentType(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenGamePasswordDidNotMatch() throws Exception {
+        // given
+        String gameName = "gameName";
+        String playerName = "playerName";
+        String path = "/game/" + gameName + "/player";
+        String joinRequest = "{\n" +
+                "   \"playerName\":\"" + playerName + "\",\n" +
+                "   \"password\":\"any\",\n" +
+                "   \"gamePassword\":\"any\"\n" +
+                "}";
+        when(gameJoinerService.joinPlayer(any(), any())).thenThrow(IncorrectGamePasswordException.class);
 
         // when & then
         mockMvc.perform(post(path).content(joinRequest).contentType(APPLICATION_JSON_VALUE))

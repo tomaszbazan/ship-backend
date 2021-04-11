@@ -17,7 +17,7 @@ class GameRegistrationIT extends IntegrationTest {
         // given
         PlayerName playerName = new PlayerName("PlayerOne");
         GameName gameName = registerGame();
-        JoinRequest joinRequest = new JoinRequest(playerName.getName(), "anyPassword");
+        JoinRequest joinRequest = new JoinRequest(playerName.getName(), "anyPassword", "anyGamePassword");
 
         // when
         PlayerJoined playerJoined = registerRestController.joinGame(gameName.getName(), joinRequest);

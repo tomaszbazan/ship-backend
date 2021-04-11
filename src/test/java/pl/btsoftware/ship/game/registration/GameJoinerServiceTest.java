@@ -36,7 +36,7 @@ class GameJoinerServiceTest {
     void shouldAddPlayerToDatabase() {
         // given
         GameName gameName = new GameName("gameName");
-        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword");
+        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "anyPassword");
         when(gameRegistrationService.findGame(gameName)).thenReturn(of(game(gameName)));
         when(playerInGameRepository.save(any())).thenReturn(new PlayerInGameEntity(new PlayerEntity(joinRequest), game(gameName), Country.JAMAICA));
 
@@ -51,7 +51,7 @@ class GameJoinerServiceTest {
     void shouldJoinPlayerToGame() {
         // given
         GameName gameName = new GameName("gameName");
-        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword");
+        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "anyPassword");
         when(gameRegistrationService.findGame(gameName)).thenReturn(of(game(gameName)));
         when(playerInGameRepository.save(any())).thenReturn(new PlayerInGameEntity(new PlayerEntity(joinRequest), game(gameName), Country.JAMAICA));
 
@@ -66,10 +66,21 @@ class GameJoinerServiceTest {
     void shouldThrowGameNotExistsWhenGameWasntCreated() {
         // given
         GameName gameName = new GameName("gameName");
-        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword");
+        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "anyGamePassword");
         when(gameRegistrationService.findGame(gameName)).thenReturn(Optional.empty());
 
         // when & then
         assertThrows(GameNotExistsException.class, () -> gameJoinerService.joinPlayer(gameName, joinRequest));
+    }
+
+    @Test
+    void shouldThrowIncorrectGamePasswordWhenGamePasswordDidntMatchWithSaved() {
+        // given
+        GameName gameName = new GameName("gameName");
+        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "incorrectPassword");
+        when(gameRegistrationService.findGame(gameName)).thenReturn(Optional.of(GameFixture.game(gameName, "correctPassword")));
+
+        // when & then
+        assertThrows(IncorrectGamePasswordException.class, () -> gameJoinerService.joinPlayer(gameName, joinRequest));
     }
 }
