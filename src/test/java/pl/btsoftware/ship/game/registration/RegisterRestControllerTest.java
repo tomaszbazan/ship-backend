@@ -86,7 +86,7 @@ class RegisterRestControllerTest {
         // then
         assertThat(readPath(response, "$.playerName.name")).isEqualTo(playerName);
         assertThat(readPath(response, "$.gameName.name")).isEqualTo(gameName);
-        assertThat(readPath(response, "$.country")).isEqualTo(Country.JAMAICA.toString());
+        assertThat(readPath(response, "$.country")).isEqualTo(Country.JAMAICA.getCountryName());
     }
 
     @Test

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.btsoftware.ship.IntegrationTest;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +30,7 @@ class GameRegistrationIT extends IntegrationTest {
     }
 
     private GameName registerGame() {
-        GameRequest gameRequest = GameRequest.builder().gameName("anyName").password("anyPassword").startDate(LocalDate.of(2020, 4, 7)).build();
+        GameRequest gameRequest = GameRequest.builder().gameName("anyName" + UUID.randomUUID()).password("anyGamePassword").startDate(LocalDate.of(2020, 4, 7)).build();
         return registerRestController.registerGame(gameRequest);
     }
 }

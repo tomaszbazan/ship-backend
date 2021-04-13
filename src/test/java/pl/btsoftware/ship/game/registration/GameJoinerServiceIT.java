@@ -4,8 +4,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.btsoftware.ship.IntegrationTest;
+import pl.btsoftware.ship.game.fixtures.GameFixture;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +25,7 @@ class GameJoinerServiceIT extends IntegrationTest {
     void shouldStorePasswordEncryptedInSha256() {
         // given
         String password = "hardPassword!23aDASdzxc123))***";
-        GameName gameName = new GameName("anyGame");
+        GameName gameName = new GameName("anyGame" + UUID.randomUUID());
         gameRepository.save(GameFixture.game(gameName));
         JoinRequest joinRequest = new JoinRequest("anyName", password, "anyGamePassword");
 

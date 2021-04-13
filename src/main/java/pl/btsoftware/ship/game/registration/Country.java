@@ -1,9 +1,10 @@
 package pl.btsoftware.ship.game.registration;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-enum Country {
+public enum Country {
     JAMAICA("Jamaica"),
     HAITI("Haiti"),
     CUBA("Cuba"),
@@ -12,4 +13,8 @@ enum Country {
 
     private final String countryName;
 
+    @JsonValue
+    public String getCountryName() {
+        return countryName;
+    }
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pl.btsoftware.ship.game.fixtures.GameFixture;
 
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static pl.btsoftware.ship.game.registration.GameFixture.game;
+import static pl.btsoftware.ship.game.fixtures.GameFixture.game;
 
 @ExtendWith(MockitoExtension.class)
 class GameJoinerServiceTest {
@@ -36,7 +37,7 @@ class GameJoinerServiceTest {
     void shouldAddPlayerToDatabase() {
         // given
         GameName gameName = new GameName("gameName");
-        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "anyPassword");
+        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "anyGamePassword");
         when(gameRegistrationService.findGame(gameName)).thenReturn(of(game(gameName)));
         when(playerInGameRepository.save(any())).thenReturn(new PlayerInGameEntity(new PlayerEntity(joinRequest), game(gameName), Country.JAMAICA));
 
@@ -51,7 +52,7 @@ class GameJoinerServiceTest {
     void shouldJoinPlayerToGame() {
         // given
         GameName gameName = new GameName("gameName");
-        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "anyPassword");
+        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "anyGamePassword");
         when(gameRegistrationService.findGame(gameName)).thenReturn(of(game(gameName)));
         when(playerInGameRepository.save(any())).thenReturn(new PlayerInGameEntity(new PlayerEntity(joinRequest), game(gameName), Country.JAMAICA));
 

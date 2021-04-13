@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
-class PlayerName implements Serializable {
+public class PlayerName implements Serializable {
     @NonNull
     private String name;
 }
