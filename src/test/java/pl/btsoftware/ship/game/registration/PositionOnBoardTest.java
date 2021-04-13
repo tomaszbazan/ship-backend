@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Map;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,10 +42,10 @@ class PositionOnBoardTest {
     }
 
     @Test
-    void positionYCantBeMoreThan8() {
+    void positionYCantBeMoreThan9() {
         // given
         int x = 5;
-        int y = 9;
+        int y = 10;
 
         // when & then
         assertThrows(IncorrectPositionException.class, () -> new PositionOnBoard(x, y));

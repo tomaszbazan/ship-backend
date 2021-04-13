@@ -14,7 +14,7 @@ public class PositionOnBoard implements Serializable {
     private int y;
 
     public PositionOnBoard(int x, int y) {
-        if (isNotBetween(x, 1, 8) || isNotBetween(y, 1, 8)) {
+        if (isNotBetween(x, 1, 8) || isNotBetween(y, 1, 9)) {
             throw new IncorrectPositionException();
         }
         this.x = x;
