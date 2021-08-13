@@ -1,0 +1,7 @@
+spring:
+  jpa:
+    properties.hibernate.temp.use_jdbc_metadata_defaults: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+server.error.include-message: always

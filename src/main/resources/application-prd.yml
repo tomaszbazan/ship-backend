@@ -1,0 +1,6 @@
+spring:
+  jpa.show-sql: false
+  datasource:
+    url: jdbc:postgresql://postgres-postgresql.postgres:5432/ships
+    username: ships
+    password: udVmWDW9NSm3sAMu6g4s

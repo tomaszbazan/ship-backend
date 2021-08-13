@@ -1,12 +1,11 @@
 package pl.btsoftware.ship.game.fixtures;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import pl.btsoftware.ship.game.registration.GameEntity;
-import pl.btsoftware.ship.game.registration.GameId;
-import pl.btsoftware.ship.game.registration.GameName;
+import pl.btsoftware.ship.registration.game.GameEntity;
+import pl.btsoftware.ship.registration.game.GameId;
+import pl.btsoftware.ship.registration.game.GameName;
+import pl.btsoftware.ship.registration.game.GamePassword;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 public class GameFixture {
     public static GameEntity game(GameName gameName) {
@@ -15,9 +14,9 @@ public class GameFixture {
 
     public static GameEntity game(GameName gameName, String gamePassword) {
         GameEntity gameEntity = new GameEntity();
-        gameEntity.setId(new GameId(UUID.randomUUID()));
+        gameEntity.setId(new GameId());
         gameEntity.setName(gameName);
-        gameEntity.setPassword(DigestUtils.sha256Hex(gamePassword));
+        gameEntity.setPassword(new GamePassword(gamePassword));
         gameEntity.setStartDate(LocalDate.of(2020, 4, 7));
         return gameEntity;
     }

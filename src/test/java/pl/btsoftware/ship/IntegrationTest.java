@@ -16,7 +16,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @ContextConfiguration(initializers = IntegrationTest.Initializer.class)
 @Slf4j
 public abstract class IntegrationTest {
-    public static PostgreSQLContainer<?> postgreDBContainer = new PostgreSQLContainer<>("postgres:12.6")
+    public static final PostgreSQLContainer<?> postgreDBContainer = new PostgreSQLContainer<>("postgres:12.6")
             .withDatabaseName("ships")
             .withUsername("ships")
             .withPassword("ships");
