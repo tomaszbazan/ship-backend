@@ -33,7 +33,7 @@ build:
     MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
     MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
   script:
-    mvn compile package sonar:sonar -Dsonar.projectKey=$SONAR_PROJECT -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_API_KEY
+    mvn compile package jacoco:report sonar:sonar -Dsonar.projectKey=$SONAR_PROJECT -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_API_KEY
   artifacts:
     paths:
       - target/*.jar
