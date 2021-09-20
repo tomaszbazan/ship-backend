@@ -3,7 +3,7 @@ package pl.btsoftware.ship.game.country;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.btsoftware.ship.game.board.PlayerPosition;
+import pl.btsoftware.ship.game.board.PlayerSituation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -78,6 +78,6 @@ class CountryFinderTest {
         long numberOfPlayers = 5L;
 
         // when & then
-        assertThrows(PlayerPosition.MaximumPlayersInGameException.class, () -> CountryFinder.nextFreeCountry(numberOfPlayers));
+        assertThrows(PlayerSituation.MaximumPlayersInGameException.class, () -> CountryFinder.nextFreeCountry(numberOfPlayers));
     }
 }

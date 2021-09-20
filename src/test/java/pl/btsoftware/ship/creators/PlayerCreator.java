@@ -1,12 +1,11 @@
-package pl.btsoftware.ship.game.fixtures;
+package pl.btsoftware.ship.creators;
 
 import pl.btsoftware.ship.registration.player.PlayerEntity;
 import pl.btsoftware.ship.registration.player.PlayerId;
 import pl.btsoftware.ship.registration.player.PlayerName;
-import pl.btsoftware.ship.registration.player.PlayerPassword;
 
-public class PlayerFixture {
+public class PlayerCreator {
     public static PlayerEntity player(PlayerName playerName) {
-        return new PlayerEntity(PlayerId.newId(), playerName, new PlayerPassword("anyPassword"));
+        return new PlayerEntity(PlayerId.newId(), playerName, PasswordCreator.defaultTeamPassword());
     }
 }

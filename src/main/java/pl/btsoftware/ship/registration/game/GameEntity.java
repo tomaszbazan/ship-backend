@@ -2,6 +2,7 @@ package pl.btsoftware.ship.registration.game;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -28,11 +29,11 @@ public class GameEntity {
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    public static GameEntity from(RegisterGameRequest registerGameRequest) {
+    public static GameEntity from(RegisterGameRequest registerGameRequest, PasswordEncoder passwordEncoder) {
         GameEntity gameEntity = new GameEntity();
         gameEntity.setId(GameId.newId());
         gameEntity.setName(GameName.from(registerGameRequest));
-        gameEntity.setPassword(GamePassword.from(registerGameRequest));
+        gameEntity.setPassword(GamePassword.from(registerGameRequest, passwordEncoder));
         gameEntity.setStartDate(registerGameRequest.getStartDate());
 
         return gameEntity;

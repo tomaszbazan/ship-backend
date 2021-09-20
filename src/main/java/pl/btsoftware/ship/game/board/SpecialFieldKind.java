@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-enum SpecialFieldKind {
+public enum SpecialFieldKind {
     BOTTLE("bottle"), ADVENTURE("adventure"), TREASURE("treasure");
 
     private final String kind;

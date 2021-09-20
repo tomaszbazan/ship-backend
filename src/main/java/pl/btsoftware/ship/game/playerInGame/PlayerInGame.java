@@ -1,24 +1,31 @@
 package pl.btsoftware.ship.game.playerInGame;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import pl.btsoftware.ship.game.country.Country;
+import pl.btsoftware.ship.game.goods.Goods;
 import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.player.PlayerName;
 
-@NoArgsConstructor
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 @AllArgsConstructor
 public class PlayerInGame {
+    @JsonProperty("player_name")
     PlayerName playerName;
+    @JsonProperty("game_name")
     GameName gameName;
     Country country;
+    List<Goods> goods;
 
     public static PlayerInGame from(PlayerInGameEntity playerInGame) {
-        if(playerInGame == null) {
+        if (playerInGame == null) {
             return null;
         }
-        return new PlayerInGame(playerInGame.getPlayerName(), playerInGame.getGameName(), playerInGame.getCountry());
+        return new PlayerInGame(playerInGame.getPlayerName(), playerInGame.getGameName(), playerInGame.getCountry(), playerInGame.getGoods().stream().map(Goods::from).collect(Collectors.toList()));
     }
 }
+

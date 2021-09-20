@@ -41,9 +41,9 @@ class BoardInformationServiceIT extends IntegrationTest {
 
         // then
         assertThat(situations.getPlayers()).hasSize(Country.values().length);
-        assertThat(situations.getPlayers()).extracting(PlayerPosition::getCountry).doesNotContainNull();
-        assertThat(situations.getPlayers()).extracting(PlayerPosition::getPlayerName).doesNotContainNull();
-        assertThat(situations.getPlayers()).extracting(PlayerPosition::getCoordinates).doesNotContainNull();
+        assertThat(situations.getPlayers()).extracting(PlayerSituation::getCountry).doesNotContainNull();
+        assertThat(situations.getPlayers()).extracting(PlayerSituation::getPlayerName).doesNotContainNull();
+        assertThat(situations.getPlayers()).extracting(PlayerSituation::getCoordinates).doesNotContainNull();
     }
 
     private void allCountriesAreMaking3RandomMoves(GameName gameName) {

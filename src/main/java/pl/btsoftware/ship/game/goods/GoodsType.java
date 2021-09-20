@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-enum GoodsType {
+public enum GoodsType {
     COFFEE("Coffee"),
     COCOA("Cocoa"),
     SUGARCANE("Sugarcane"),

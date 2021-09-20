@@ -3,6 +3,8 @@ package pl.btsoftware.ship.registration.player;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.btsoftware.ship.registration.game.GameName;
+import pl.btsoftware.ship.registration.player.PlayerService;
+import pl.btsoftware.ship.registration.player.RegisterPlayerRequest;
 
 @Component
 @AllArgsConstructor

@@ -5,8 +5,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.btsoftware.ship.creators.GameCreator;
+import pl.btsoftware.ship.creators.GoodsCreator;
+import pl.btsoftware.ship.creators.PlayerInGameCreator;
 import pl.btsoftware.ship.game.country.Country;
-import pl.btsoftware.ship.game.fixtures.GameFixture;
 import pl.btsoftware.ship.game.playerInGame.PlayerInGame;
 import pl.btsoftware.ship.game.playerInGame.PlayerInGameService;
 import pl.btsoftware.ship.registration.game.GameName;
@@ -37,13 +40,17 @@ class PlayerServiceTest {
     @Mock
     private GameService gameService;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @Test
     void shouldRegisterPlayerAndSaveItToDatabase() {
         // given
         GameName gameName = new GameName("gameName");
         RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest("anyPlayer", "anyPassword", CORRECT_GAME_PASSWORD);
         givenGameExists(gameName);
-        when(playerInGameService.addPlayerToGame(any(), any())).thenReturn(new PlayerInGame(new PlayerName(registerPlayerRequest.getTeamName()), gameName, Country.JAMAICA));
+        givenPasswordsMatch();
+        when(playerInGameService.addPlayerToGame(any(), any())).thenReturn(PlayerInGame.from(PlayerInGameCreator.createPlayer(gameName, new PlayerName("anyPlayer"))));
 
         // when
         playerService.joinPlayer(gameName, registerPlayerRequest);
@@ -52,21 +59,6 @@ class PlayerServiceTest {
         verify(playerRepository).save(any());
     }
 
-
-    //    @Test
-//    void shouldJoinPlayerToGame() {
-//        // given
-//        GameName gameName = new GameName("gameName");
-//        JoinRequest joinRequest = new JoinRequest("anyPlayer", "anyPassword", "anyGamePassword");
-//        when(gameRegistrationService.findGame(gameName)).thenReturn(of(game(gameName)));
-//        when(playerInGameRepository.save(any())).thenReturn(new PlayerInGameEntity(new PlayerEntity(joinRequest), game(gameName), Country.JAMAICA));
-//
-//        // when
-//        gameJoinerService.joinPlayer(gameName, joinRequest);
-//
-//        // then
-//        verify(playerInGameRepository).save(any());
-//    }
     @Test
     void shouldThrowGameNotExistsWhenGameWasntCreated() {
         // given
@@ -84,13 +76,22 @@ class PlayerServiceTest {
         GameName gameName = new GameName("gameName");
         RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest("anyPlayer", "anyPassword", "incorrectGamePassword");
         givenGameExists(gameName);
+        givenPasswordsDoesntMatch();
 
         // when & then
         assertThrows(IncorrectPasswordException.class, () -> playerService.joinPlayer(gameName, registerPlayerRequest));
     }
 
+    private void givenPasswordsMatch() {
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+    }
+
+    private void givenPasswordsDoesntMatch() {
+        when(passwordEncoder.matches(any(), any())).thenReturn(false);
+    }
+
     private void givenGameExists(GameName gameName) {
-        when(gameService.findGame(gameName)).thenReturn(of(GameFixture.game(gameName, CORRECT_GAME_PASSWORD)));
+        when(gameService.findGame(gameName)).thenReturn(of(GameCreator.game(gameName, CORRECT_GAME_PASSWORD)));
     }
 
     private void givenGameNotExists(GameName gameName) {

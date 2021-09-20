@@ -1,6 +1,6 @@
 package pl.btsoftware.ship.game.country;
 
-import pl.btsoftware.ship.game.board.PlayerPosition;
+import pl.btsoftware.ship.game.board.PlayerSituation;
 
 import static pl.btsoftware.ship.game.country.Country.*;
 
@@ -18,7 +18,7 @@ public class CountryFinder {
             case 4:
                 return PUERTO_RICO;
             default:
-                throw new PlayerPosition.MaximumPlayersInGameException();
+                throw new PlayerSituation.MaximumPlayersInGameException();
         }
     }
 }

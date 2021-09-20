@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.btsoftware.ship.game.board.PositionOnBoard;
 import pl.btsoftware.ship.game.playerInGame.PlayerMoverService;
+import pl.btsoftware.ship.game.playerInGame.PlayerNextActionDto;
 import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.player.PlayerName;
 
@@ -17,8 +18,8 @@ public class PlayerMoveRestController {
 
     @PostMapping(value = "/game/{gameName}/player/{playerName}/move")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void playerMove(@PathVariable String gameName, @PathVariable String playerName, @RequestBody PositionOnBoard positionOnBoard) {
+    public PlayerNextActionDto playerMove(@PathVariable String gameName, @PathVariable String playerName, @RequestBody PositionOnBoard positionOnBoard) {
         log.info("Making move in game: " + gameName + " and player: " + playerName + " on " + positionOnBoard.toString());
-        playerMoverService.movePlayer(new GameName(gameName), new PlayerName(playerName), positionOnBoard);
+        return playerMoverService.movePlayer(new GameName(gameName), new PlayerName(playerName), positionOnBoard);
     }
 }

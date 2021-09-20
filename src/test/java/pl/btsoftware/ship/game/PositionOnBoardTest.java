@@ -3,7 +3,7 @@ package pl.btsoftware.ship.game;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.btsoftware.ship.game.board.PlayerPosition;
+import pl.btsoftware.ship.game.board.PlayerSituation;
 import pl.btsoftware.ship.game.board.PositionOnBoard;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +17,7 @@ class PositionOnBoardTest {
         int y = 5;
 
         // when & then
-        assertThrows(PlayerPosition.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
+        assertThrows(PlayerSituation.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
     }
 
     @Test
@@ -27,7 +27,7 @@ class PositionOnBoardTest {
         int y = 5;
 
         // when & then
-        assertThrows(PlayerPosition.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
+        assertThrows(PlayerSituation.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
     }
 
     @Test
@@ -37,7 +37,7 @@ class PositionOnBoardTest {
         int y = 0;
 
         // when & then
-        assertThrows(PlayerPosition.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
+        assertThrows(PlayerSituation.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
     }
 
     @Test
@@ -47,6 +47,6 @@ class PositionOnBoardTest {
         int y = 10;
 
         // when & then
-        assertThrows(PlayerPosition.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
+        assertThrows(PlayerSituation.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
     }
 }

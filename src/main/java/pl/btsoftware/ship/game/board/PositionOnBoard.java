@@ -22,7 +22,7 @@ public class PositionOnBoard implements Serializable {
 
     public PositionOnBoard(int x, int y) {
         if (isNotBetween(x, MIN_X, MAX_X) || isNotBetween(y, MIN_Y, MAX_Y)) {
-            throw new PlayerPosition.IncorrectPositionException();
+            throw new PlayerSituation.IncorrectPositionException();
         }
         this.x = x;
         this.y = y;
@@ -30,14 +30,14 @@ public class PositionOnBoard implements Serializable {
 
     public void setX(int x) {
         if (isNotBetween(x, MIN_X, MAX_X)) {
-            throw new PlayerPosition.IncorrectPositionException();
+            throw new PlayerSituation.IncorrectPositionException();
         }
         this.x = x;
     }
 
     public void setY(int y) {
         if (isNotBetween(y, MIN_Y, MAX_Y)) {
-            throw new PlayerPosition.IncorrectPositionException();
+            throw new PlayerSituation.IncorrectPositionException();
         }
         this.y = y;
     }

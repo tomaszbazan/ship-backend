@@ -1,8 +1,8 @@
 package pl.btsoftware.ship.registration.game;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.btsoftware.ship.IntegrationTest;
 
 import java.time.LocalDate;
@@ -15,8 +15,11 @@ class GameServiceIT extends IntegrationTest {
     @Autowired
     private GameService gameService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Test
-    void shouldStorePasswordEncryptedInSha256() {
+    void shouldStorePasswordEncryptedInPbkdf2() {
         // given
         String password = "hardPassword!23aDASdzxc123))***";
         RegisterGameRequest registerGameRequest = new RegisterGameRequest("anyName" + UUID.randomUUID(), password, LocalDate.of(2020, 4, 7));
@@ -25,8 +28,8 @@ class GameServiceIT extends IntegrationTest {
         GameName gameName = gameService.register(registerGameRequest);
 
         // then
-        Optional<GameEntity> gameEntity = gameService.findGame(gameName);
-        assertThat(gameEntity.isPresent()).isTrue();
-        assertThat(gameEntity.get().getPassword()).isEqualTo(new GamePassword(password));
+        Optional<GameEntity> game = gameService.findGame(gameName);
+        assertThat(game.isPresent()).isTrue();
+        assertThat(passwordEncoder.matches(password, game.get().getPassword().value())).isTrue();
     }
 }

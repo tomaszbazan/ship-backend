@@ -7,11 +7,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import pl.btsoftware.ship.game.events.EventsService;
 import pl.btsoftware.ship.game.playerInGame.exception.PlayerNotFoundInGameException;
 import pl.btsoftware.ship.game.board.PositionOnBoard;
-import pl.btsoftware.ship.game.fixtures.GameFixture;
-import pl.btsoftware.ship.game.fixtures.PlayerInGameFixture;
+import pl.btsoftware.ship.creators.GameCreator;
+import pl.btsoftware.ship.creators.PlayerInGameCreator;
 import pl.btsoftware.ship.game.country.Country;
 import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.player.PlayerName;
@@ -21,14 +22,16 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 class PlayerMoverServiceTest {
     @InjectMocks
     private PlayerMoverService playerMoverService;
 
     @Mock
     private PlayerInGameRepository playerInGameRepository;
+
+    @Mock
+    private EventsService eventsService;
 
     private static Stream<Arguments> correctMoves() {
         return Stream.of(
@@ -52,7 +55,7 @@ class PlayerMoverServiceTest {
         // given
         GameName gameName = new GameName("anyName");
         PlayerName playerName = new PlayerName("anyPlayerName");
-        when(playerInGameRepository.getFirstByGame_NameAndPlayer_NameOrderByOccurrenceDesc(gameName, playerName)).thenReturn(PlayerInGameFixture.createPlayer(GameFixture.game(gameName), playerName, Country.JAMAICA, startPosition));
+        when(playerInGameRepository.getFirstByGame_NameAndPlayer_NameOrderByOccurrenceDesc(gameName, playerName)).thenReturn(PlayerInGameCreator.createPlayer(GameCreator.game(gameName), playerName, Country.JAMAICA, startPosition));
 
         // when
         playerMoverService.movePlayer(gameName, playerName, moveOn);

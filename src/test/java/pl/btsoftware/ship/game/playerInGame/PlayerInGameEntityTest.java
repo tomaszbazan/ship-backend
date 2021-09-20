@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class PlayerInGameEntityTest {
 
     @Test
-    public void shouldThrowInvalidStartPointExceptionIfStartPositionIsNullAndNewCoordinateIsNotInFirstLine() {
+    void shouldThrowInvalidStartPointExceptionIfStartPositionIsNullAndNewCoordinateIsNotInFirstLine() {
         // given
         PlayerInGameEntity playerInGameEntity = new PlayerInGameEntity();
 
@@ -19,7 +19,7 @@ class PlayerInGameEntityTest {
     }
 
     @Test
-    public void shouldThrowInvalidMoveExceptionIfStartPositionIsNotNullAndNewCoordinateIsInMoreThanOneField() {
+    void shouldThrowInvalidMoveExceptionIfStartPositionIsNotNullAndNewCoordinateIsInMoreThanOneField() {
         // given
         PlayerInGameEntity playerInGameEntity = new PlayerInGameEntity();
         playerInGameEntity.setPositionOnBoard(new PositionOnBoard(1, 1));
@@ -29,7 +29,7 @@ class PlayerInGameEntityTest {
     }
 
     @Test
-    public void shouldThrowInvalidMoveExceptionIfStartPositionAndNewCoordinateAreEquals() {
+    void shouldThrowInvalidMoveExceptionIfStartPositionAndNewCoordinateAreEquals() {
         // given
         PlayerInGameEntity playerInGameEntity = new PlayerInGameEntity();
         playerInGameEntity.setPositionOnBoard(new PositionOnBoard(3, 3));

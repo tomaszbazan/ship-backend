@@ -2,6 +2,7 @@ package pl.btsoftware.ship.game.board;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import pl.btsoftware.ship.game.playerInGame.PlayerInGameEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,20 +10,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Data
 public class ActualBoardSituation {
-    private List<PlayerPosition> players;
+    private List<PlayerSituation> players;
 
-    public static ActualBoardSituation from(List<PositionInGame> playersPosition) {
-        return new ActualBoardSituation(playersPosition.stream().map(ActualBoardSituation::map).collect(Collectors.toList()));
+    public static ActualBoardSituation from(List<PlayerInGameEntity> playersInGame) {
+        return new ActualBoardSituation(playersInGame.stream().map(ActualBoardSituation::map).collect(Collectors.toList()));
     }
 
-    private static PlayerPosition map(PositionInGame positionInGame) {
-        return PlayerPosition.from(positionInGame);
-    }
-
-    public interface PositionInGame {
-        String getPlayerName();
-        String getCountry();
-        Integer getCoordinateX();
-        Integer getCoordinateY();
+    private static PlayerSituation map(PlayerInGameEntity positionInGame) {
+        return PlayerSituation.from(positionInGame);
     }
 }

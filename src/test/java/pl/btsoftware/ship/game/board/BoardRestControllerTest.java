@@ -5,11 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.btsoftware.ship.game.playerInGame.exception.PlayerNotFoundInGameException;
 import pl.btsoftware.ship.game.country.Country;
 import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.game.exception.GameNotExistsException;
-import pl.btsoftware.ship.registration.player.PlayerName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +42,7 @@ class BoardRestControllerTest {
         checkStartingPoints(response);
         checkEndingPoints(response);
         checkCoordinates(response);
-//        checkSpecialFields(response); TODO:
+        checkSpecialFields(response);
     }
 
     @Test
@@ -78,69 +76,22 @@ class BoardRestControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    void shouldReturnActualSituationOnBoardForSpecificPlayer() throws Exception {
-        // given
-        String gameName = "anyName";
-        String playerName = "anyPlayerName";
-        String path = "/game/" + gameName + "/player/" + playerName + "/board";
-        when(boardInformationService.actualSituation(new GameName(gameName), new PlayerName(playerName))).thenReturn(anySituationOnBoard(playerName));
-
-        // when
-        String response = mockMvc.perform(get(path))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-
-        // then
-        assertThat(readPath(response, "$.players[*].player_name")).contains(playerName);
-        assertThat(readPath(response, "$.players[*].country")).isNotEmpty();
-        assertThat(readPath(response, "$.players[*].coordinates.x")).isNotEmpty();
-        assertThat(readPath(response, "$.players[*].coordinates.y")).isNotEmpty();
-    }
-
-    @Test
-    void shouldReturnNotFoundWhenInfoOfSinglePlayerAndPlayerNotExists() throws Exception {
-        // given
-        String gameName = "anyName";
-        String playerName = "anyPlayerName";
-        String path = "/game/" + gameName + "/player/" + playerName;
-        when(boardInformationService.actualSituation(new GameName(gameName), new PlayerName(playerName))).thenThrow(PlayerNotFoundInGameException.class);
-
-        // when & then
-        mockMvc.perform(get(path))
-                .andExpect(status().isNotFound());
-    }
-
-    private ActualBoardSituation anySituationOnBoard(String playerName) {
-        ActualBoardSituation actualBoardSituation = new ActualBoardSituation(emptyList());
-
-        List<PlayerPosition> playerPositions = new ArrayList<>();
-        playerPositions.add(PlayerPosition.builder().playerName(playerName).country(Country.JAMAICA).coordinates(new PositionOnBoard(1, 1)).build());
-
-        actualBoardSituation.setPlayers(playerPositions);
-
-        return actualBoardSituation;
-    }
-
     private ActualBoardSituation anySituationOnBoard() {
         ActualBoardSituation actualBoardSituation = new ActualBoardSituation(emptyList());
 
-        List<PlayerPosition> playerPositions = new ArrayList<>();
-        playerPositions.add(PlayerPosition.builder().playerName("firstPlayer").country(Country.JAMAICA).coordinates(new PositionOnBoard(1, 1)).build());
-        playerPositions.add(PlayerPosition.builder().playerName("secondPlayer").country(Country.HAITI).coordinates(new PositionOnBoard(2, 5)).build());
+        List<PlayerSituation> playerSituations = new ArrayList<>();
+        playerSituations.add(PlayerSituation.builder().playerName("firstPlayer").country(Country.JAMAICA).coordinates(new PositionOnBoard(1, 1)).build());
+        playerSituations.add(PlayerSituation.builder().playerName("secondPlayer").country(Country.HAITI).coordinates(new PositionOnBoard(2, 5)).build());
 
-        actualBoardSituation.setPlayers(playerPositions);
+        actualBoardSituation.setPlayers(playerSituations);
 
         return actualBoardSituation;
     }
 
     private void checkSpecialFields(String response) {
         assertThat(readPath(response, "$.rows[*].fields[?(@.x == 2 && @.y == 2)].special.kind")).contains("bottle");
-        assertThat(readPath(response, "$.rows[*].fields[?(@.x == 2 && @.y == 2)].special.number")).contains("1");
         assertThat(readPath(response, "$.rows[*].fields[?(@.x == 4 && @.y == 2)].special.kind")).contains("adventure");
-        assertThat(readPath(response, "$.rows[*].fields[?(@.x == 4 && @.y == 2)].special.number")).contains("3");
         assertThat(readPath(response, "$.rows[*].fields[?(@.x == 3 && @.y == 4)].special.kind")).contains("treasure");
-        assertThat(readPath(response, "$.rows[*].fields[?(@.x == 3 && @.y == 4)].special.number")).contains("36");
     }
 
     private void checkCoordinates(String response) {

@@ -2,6 +2,7 @@ package pl.btsoftware.ship.game.playerInGame;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.btsoftware.ship.game.goods.Goods;
 import pl.btsoftware.ship.game.playerInGame.exception.InvalidStartPointException;
 import pl.btsoftware.ship.game.board.PositionOnBoard;
 import pl.btsoftware.ship.game.country.Country;
@@ -15,6 +16,7 @@ import pl.btsoftware.ship.registration.player.PlayerName;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.time.Clock.*;
 
@@ -47,16 +49,17 @@ public class PlayerInGameEntity {
     @JoinTable(name = "player_in_game_goods",
             joinColumns = @JoinColumn(name = "player_in_game_id"),
             inverseJoinColumns = @JoinColumn(name = "goods_id"))
-    private List<GoodsEntity> goodsList;
+    private List<GoodsEntity> goods;
 
     @Column(nullable = false)
     private LocalDateTime occurrence;
 
-    PlayerInGameEntity(PlayerEntity player, GameEntity game, Country country) {
+    PlayerInGameEntity(PlayerEntity player, GameEntity game, Country country, List<Goods> goods) {
         this.id = PlayerInGameId.newId();
         this.player = player;
         this.game = game;
         this.country = country;
+        this.goods = goods.stream().map(GoodsEntity::from).collect(Collectors.toList());
         this.occurrence = LocalDateTime.now(systemUTC());
     }
 
@@ -67,6 +70,7 @@ public class PlayerInGameEntity {
         playerInGame.setGame(entity.getGame());
         playerInGame.setCountry(entity.getCountry());
         playerInGame.setPositionOnBoard(coordinates);
+        playerInGame.setGoods(entity.getGoods());
         playerInGame.setOccurrence(LocalDateTime.now(systemUTC()));
 
         return playerInGame;

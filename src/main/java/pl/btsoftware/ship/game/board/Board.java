@@ -17,7 +17,5 @@ class Board {
     }
 }
 
-@Value
-class BoardRow {
-    List<Field> fields;
+record BoardRow(List<Field> fields) {
 }

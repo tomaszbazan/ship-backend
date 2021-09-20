@@ -1,22 +1,25 @@
 package pl.btsoftware.ship.registration.player;
 
 import lombok.*;
-import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Embeddable;
 
 @Embeddable
 @NoArgsConstructor
-@EqualsAndHashCode
 public class PlayerPassword {
     @NonNull
     private String password;
 
-    static PlayerPassword from(RegisterPlayerRequest registerPlayerRequest) {
-        return new PlayerPassword(registerPlayerRequest.getTeamPassword());
+    static PlayerPassword from(RegisterPlayerRequest registerPlayerRequest, PasswordEncoder passwordEncoder) {
+        return new PlayerPassword(registerPlayerRequest.getTeamPassword(), passwordEncoder);
     }
 
-    public PlayerPassword(@NonNull String password) {
-        this.password = DigestUtils.sha256Hex(password);
+    public PlayerPassword(@NonNull String password, PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
+    }
+
+    public String value() {
+        return this.password;
     }
 }
