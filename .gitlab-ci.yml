@@ -18,7 +18,7 @@ variables:
   CONTAINER_IMAGE_LATEST: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 
   SONAR_PROJECT: ship-backend
-  SONAR_URL: https://sonar.bazan.tk
+  SONAR_URL: https://sonar.btsoftware.pl
   SONAR_API_KEY: eed217d41226b4b5a467ebc5415c8540f1262aba
 
   NAMESPACE: ships
