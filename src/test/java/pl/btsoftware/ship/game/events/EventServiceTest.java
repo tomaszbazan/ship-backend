@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class EventsServiceTest {
+class EventServiceTest {
     @InjectMocks
     EventsService eventsService;
 
@@ -53,8 +53,8 @@ class EventsServiceTest {
         verify(eventsInGameRepository, times(0)).delete(any());
     }
 
-    private EventsInGameEntity notRemovableEvent() {
-        return new EventsInGameEntity(new FieldId(1,1), GameCreator.game(), SpecialFieldKind.BOTTLE, "any", "any", null, false);
+    private EventInGameEntity notRemovableEvent() {
+        return new EventInGameEntity(new FieldId(1,1), GameCreator.game(), SpecialFieldKind.BOTTLE, "any", "any", null, false);
     }
 
 }

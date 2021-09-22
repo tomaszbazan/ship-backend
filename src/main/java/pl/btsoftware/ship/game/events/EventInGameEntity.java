@@ -1,19 +1,23 @@
 package pl.btsoftware.ship.game.events;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import pl.btsoftware.ship.registration.game.GameEntity;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "events")
+@Table(name = "event_in_game")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-public class Events {
+@Getter
+public class EventInGameEntity {
     @EmbeddedId
     private FieldId id;
+
+    @OneToOne
+    private GameEntity game;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -31,4 +35,8 @@ public class Events {
 
     @Column(nullable = false)
     private boolean removable;
+
+    static EventInGameEntity from(Event event, GameEntity game) {
+        return new EventInGameEntity(event.getId(), game, event.getType(), event.getTitle(), event.getDescription(), event.getAction(), event.isRemovable());
+    }
 }

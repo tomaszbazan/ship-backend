@@ -2,7 +2,7 @@ package pl.btsoftware.ship.game.playerInGame;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.btsoftware.ship.game.events.EventsInGameEntity;
+import pl.btsoftware.ship.game.events.EventInGameEntity;
 import pl.btsoftware.ship.game.events.EventsService;
 import pl.btsoftware.ship.game.playerInGame.exception.PlayerNotFoundInGameException;
 import pl.btsoftware.ship.game.board.PositionOnBoard;
@@ -22,7 +22,7 @@ public class PlayerMoverService {
         }
         lastKnownPosition.canMoveOn(newPosition);
 
-        EventsInGameEntity event = eventsService.getEvent(newPosition, gameName); // TODO: analyze action
+        EventInGameEntity event = eventsService.getEvent(newPosition, gameName); // TODO: analyze action
         PlayerInGameEntity newMove = PlayerInGameEntity.from(lastKnownPosition, newPosition);
         playerInGameRepository.save(newMove);
         return PlayerNextActionDto.from(event);

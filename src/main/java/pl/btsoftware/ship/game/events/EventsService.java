@@ -7,7 +7,6 @@ import pl.btsoftware.ship.registration.game.GameEntity;
 import pl.btsoftware.ship.registration.game.GameName;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,13 +16,13 @@ public class EventsService {
     private final EventsInGameRepository eventsInGameRepository;
 
     public void copyAllToGame(GameEntity newGame) {
-        List<Events> events = eventsRepository.findAll();
-        List<EventsInGameEntity> eventsInGameEntities = events.stream().map(event -> EventsInGameEntity.from(event, newGame)).collect(Collectors.toList());
+        List<Event> events = eventsRepository.findAll();
+        List<EventInGameEntity> eventsInGameEntities = events.stream().map(event -> EventInGameEntity.from(event, newGame)).collect(Collectors.toList());
         eventsInGameRepository.saveAll(eventsInGameEntities);
     }
 
-    public EventsInGameEntity getEvent(PositionOnBoard playerPosition, GameName gameName) {
-        EventsInGameEntity event = eventsInGameRepository.findByIdAndGame_Name(FieldId.from(playerPosition), gameName);
+    public EventInGameEntity getEvent(PositionOnBoard playerPosition, GameName gameName) {
+        EventInGameEntity event = eventsInGameRepository.findByIdAndGame_Name(FieldId.from(playerPosition), gameName);
         if(event != null && event.isRemovable()) {
             eventsInGameRepository.delete(event);
         }

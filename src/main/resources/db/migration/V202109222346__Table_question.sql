@@ -1,0 +1,11 @@
+-- create table question
+-- (
+--     id          uuid not null
+--         constraint question_pk
+--             primary key,
+--     game_id     uuid not null
+--         constraint question_game_fk
+--             references game,
+--     question    varchar(255) not null,
+--     used        boolean not null
+-- );

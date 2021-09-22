@@ -17,10 +17,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-interface StringId {
-    String getId();
-}
-
 @Service
 @AllArgsConstructor
 public class PlayerInGameService {
@@ -50,4 +46,8 @@ public class PlayerInGameService {
         List<PlayerInGameEntity> lastMoves = playerInGameRepository.findAllById(lastMoveIds.stream().map(ids -> new PlayerInGameId(UUID.fromString(ids.getId()))).collect(Collectors.toList()));
         return lastMoves.stream().map(PlayerSituation::from).collect(Collectors.toList());
     }
+}
+
+interface StringId {
+    String getId();
 }
