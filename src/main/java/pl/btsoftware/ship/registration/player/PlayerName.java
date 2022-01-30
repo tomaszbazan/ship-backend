@@ -15,6 +15,6 @@ public class PlayerName implements Serializable {
     private String name;
 
     static PlayerName from(RegisterPlayerRequest registerPlayerRequest) {
-        return new PlayerName(registerPlayerRequest.getTeamName());
+        return new PlayerName(registerPlayerRequest.playerName());
     }
 }

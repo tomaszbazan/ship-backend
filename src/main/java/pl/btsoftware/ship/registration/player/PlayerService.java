@@ -1,43 +1,57 @@
 package pl.btsoftware.ship.registration.player;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.btsoftware.ship.game.playerInGame.PlayerInGameService;
+import org.springframework.transaction.annotation.Transactional;
 import pl.btsoftware.ship.game.playerInGame.PlayerInGame;
+import pl.btsoftware.ship.game.playerInGame.PlayerInGameService;
+import pl.btsoftware.ship.game.playerInGame.PlayerJoinToGameService;
+import pl.btsoftware.ship.game.playerInGame.exception.PlayerNotFoundInGameException;
 import pl.btsoftware.ship.registration.game.GameEntity;
 import pl.btsoftware.ship.registration.game.GameName;
-import pl.btsoftware.ship.registration.game.GamePassword;
 import pl.btsoftware.ship.registration.game.GameService;
 import pl.btsoftware.ship.registration.game.exception.GameNotExistsException;
 import pl.btsoftware.ship.registration.player.exception.IncorrectPasswordException;
+import pl.btsoftware.ship.registration.player.exception.PlayerAlreadyExistsException;
 
-import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class PlayerService {
     private final PlayerRepository playerRepository;
+    private final PlayerJoinToGameService playerJoinToGameService;
     private final PlayerInGameService playerInGameService;
     private final GameService gameService;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordChecker passwordChecker;
 
     @Transactional
     PlayerInGame joinPlayer(GameName gameName, RegisterPlayerRequest registerPlayerRequest) {
         GameEntity game = gameService.findGame(gameName).orElseThrow(() -> new GameNotExistsException(gameName));
-        checkGamePassword(game, registerPlayerRequest.getGamePassword());
+        verifyPassword(game, registerPlayerRequest.gamePassword());
 
-        PlayerInGame playerInGame = playerInGameService.findPlayerInGame(gameName, new PlayerName(registerPlayerRequest.getTeamName()));
-        if(playerInGame != null) {
-            return playerInGame;
+        Optional<PlayerEntity> player = playerRepository.findByName(registerPlayerRequest.player());
+        if (player.isEmpty()) {
+            PlayerEntity newPlayer = playerRepository.save(PlayerEntity.from(registerPlayerRequest, passwordChecker.encodePassword(registerPlayerRequest.playerPassword())));
+            return playerJoinToGameService.add(game, newPlayer);
         }
-        PlayerEntity player = playerRepository.save(PlayerEntity.from(registerPlayerRequest, passwordEncoder));
-        return playerInGameService.addPlayerToGame(game, player);
+        verifyPassword(player.get(), registerPlayerRequest.playerPassword());
+
+        try {
+            return playerInGameService.findPlayerInGame(gameName, registerPlayerRequest.player());
+        } catch (PlayerNotFoundInGameException e) {
+            throw new PlayerAlreadyExistsException(player.get().getName());
+        }
     }
 
-    private void checkGamePassword(GameEntity gameEntity, String gamePassword) {
-        GamePassword createdGamePassword = gameEntity.getPassword();
-        if (!passwordEncoder.matches(gamePassword, createdGamePassword.value())) {
+    private void verifyPassword(PlayerEntity playerEntity, String playerPassword) {
+        if (!passwordChecker.checkPassword(playerEntity, playerPassword)) {
+            throw new IncorrectPasswordException(playerEntity.getName());
+        }
+    }
+
+    private void verifyPassword(GameEntity gameEntity, String gamePassword) {
+        if (!passwordChecker.checkPassword(gameEntity, gamePassword)) {
             throw new IncorrectPasswordException(gameEntity.getName());
         }
     }

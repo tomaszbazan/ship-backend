@@ -2,12 +2,12 @@ package pl.btsoftware.ship.game.playerInGame;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.btsoftware.ship.game.goods.Goods;
-import pl.btsoftware.ship.game.playerInGame.exception.InvalidStartPointException;
 import pl.btsoftware.ship.game.board.PositionOnBoard;
 import pl.btsoftware.ship.game.country.Country;
+import pl.btsoftware.ship.game.events.CardEntity;
+import pl.btsoftware.ship.game.events.EventReward;
 import pl.btsoftware.ship.game.goods.GoodsEntity;
-import pl.btsoftware.ship.game.playerInGame.exception.InvalidMoveException;
+import pl.btsoftware.ship.game.goods.GoodsType;
 import pl.btsoftware.ship.registration.game.GameEntity;
 import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.player.PlayerEntity;
@@ -15,10 +15,14 @@ import pl.btsoftware.ship.registration.player.PlayerName;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static java.time.Clock.*;
+import static java.time.Clock.systemUTC;
+import static java.time.LocalDateTime.now;
+import static java.util.stream.Collectors.toList;
 
 @Entity(name = "player_in_game")
 @Data
@@ -45,56 +49,33 @@ public class PlayerInGameEntity {
     })
     private PositionOnBoard positionOnBoard;
 
-    @OneToMany
-    @JoinTable(name = "player_in_game_goods",
-            joinColumns = @JoinColumn(name = "player_in_game_id"),
-            inverseJoinColumns = @JoinColumn(name = "goods_id"))
-    private List<GoodsEntity> goods;
+    @OneToMany(mappedBy = "playerInGame", fetch = FetchType.EAGER)
+    private List<GoodsEntity> goods = new ArrayList<>();
+
+    @OneToMany(mappedBy = "playerInGame")
+    private List<CardEntity> cards = new ArrayList<>();
 
     @Column(nullable = false)
     private LocalDateTime occurrence;
 
-    PlayerInGameEntity(PlayerEntity player, GameEntity game, Country country, List<Goods> goods) {
+    PlayerInGameEntity(PlayerEntity player, GameEntity game, Country country) {
         this.id = PlayerInGameId.newId();
         this.player = player;
         this.game = game;
         this.country = country;
-        this.goods = goods.stream().map(GoodsEntity::from).collect(Collectors.toList());
-        this.occurrence = LocalDateTime.now(systemUTC());
+        this.occurrence = now(systemUTC());
     }
 
-    public static PlayerInGameEntity from(PlayerInGameEntity entity, PositionOnBoard coordinates) {
+    public static PlayerInGameEntity from(PlayerInGameEntity entity, PositionOnBoard newPosition) {
         PlayerInGameEntity playerInGame = new PlayerInGameEntity();
         playerInGame.setId(PlayerInGameId.newId());
         playerInGame.setPlayer(entity.getPlayer());
         playerInGame.setGame(entity.getGame());
         playerInGame.setCountry(entity.getCountry());
-        playerInGame.setPositionOnBoard(coordinates);
-        playerInGame.setGoods(entity.getGoods());
-        playerInGame.setOccurrence(LocalDateTime.now(systemUTC()));
+        playerInGame.setPositionOnBoard(newPosition);
+        playerInGame.setOccurrence(now(systemUTC()));
 
         return playerInGame;
-    }
-
-    public void canMoveOn(PositionOnBoard newPosition) {
-        if (firstMove() && !newPosition.startLine()) {
-            throw new InvalidStartPointException();
-        }
-        if (!firstMove() && (incorrectDistance(newPosition) || getPositionOnBoard().equals(newPosition))) {
-            throw new InvalidMoveException();
-        }
-    }
-
-    private boolean incorrectDistance(PositionOnBoard newPosition) {
-        return calculateDistance(positionOnBoard.getX(), newPosition.getX()) > 1 || calculateDistance(positionOnBoard.getY(), newPosition.getY()) > 1;
-    }
-
-    private int calculateDistance(int startPosition, int newPosition) {
-        return Math.abs(startPosition - newPosition);
-    }
-
-    private boolean firstMove() {
-        return getPositionOnBoard() == null;
     }
 
     public PlayerName getPlayerName() {
@@ -103,5 +84,13 @@ public class PlayerInGameEntity {
 
     public GameName getGameName() {
         return game.getName();
+    }
+
+    public Map<GoodsType, Integer> goodsAsMap() {
+        return getGoods().stream().collect(Collectors.toMap(GoodsEntity::getType, GoodsEntity::getAmount));
+    }
+
+    Integer shipWeight() {
+        return getGoods().stream().filter(GoodsEntity::isNotGold).mapToInt(GoodsEntity::getAmount).sum();
     }
 }

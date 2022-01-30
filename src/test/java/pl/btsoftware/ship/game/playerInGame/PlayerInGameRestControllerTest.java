@@ -45,6 +45,6 @@ class PlayerInGameRestControllerTest {
     }
 
     private PlayerInGame anyInformationAboutPlayer(GameName gameName, PlayerName playerName) {
-        return new PlayerInGame(playerName, gameName, Country.JAMAICA, GoodsCreator.jamaicaStartGoods());
+        return new PlayerInGame(playerName, gameName, Country.JAMAICA, GoodsCreator.jamaicaStartGoods(), true);
     }
 }

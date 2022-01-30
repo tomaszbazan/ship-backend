@@ -5,17 +5,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.btsoftware.ship.creators.GameCreator;
-import pl.btsoftware.ship.creators.GoodsCreator;
+import pl.btsoftware.ship.creators.PlayerCreator;
 import pl.btsoftware.ship.creators.PlayerInGameCreator;
-import pl.btsoftware.ship.game.country.Country;
 import pl.btsoftware.ship.game.playerInGame.PlayerInGame;
 import pl.btsoftware.ship.game.playerInGame.PlayerInGameService;
+import pl.btsoftware.ship.game.playerInGame.PlayerJoinToGameService;
+import pl.btsoftware.ship.game.playerInGame.exception.PlayerNotFoundInGameException;
+import pl.btsoftware.ship.registration.game.GameEntity;
 import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.game.GameService;
 import pl.btsoftware.ship.registration.game.exception.GameNotExistsException;
 import pl.btsoftware.ship.registration.player.exception.IncorrectPasswordException;
+import pl.btsoftware.ship.registration.player.exception.PlayerAlreadyExistsException;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -26,7 +28,13 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PlayerServiceTest {
-    private static final String CORRECT_GAME_PASSWORD = "anyGamePassword";
+    private static final String CORRECT_GAME_PASSWORD = "correctGamePassword";
+    private static final String INCORRECT_GAME_PASSWORD = "incorrectGamePassword";
+    private static final String CORRECT_PLAYER_PASSWORD = "correctPlayerPassword";
+    private static final String INCORRECT_PLAYER_PASSWORD = "incorrectPlayerPassword";
+
+    private static final GameName GAME_NAME = new GameName("gameName");
+    private static final String PLAYER_NAME = "anyPlayer";
 
     @InjectMocks
     private PlayerService playerService;
@@ -35,59 +43,104 @@ class PlayerServiceTest {
     private PlayerRepository playerRepository;
 
     @Mock
-    private PlayerInGameService playerInGameService;
+    private PlayerJoinToGameService playerJoinToGameService;
 
     @Mock
     private GameService gameService;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
+    private PasswordChecker passwordChecker;
+
+    @Mock
+    private PlayerInGameService playerInGameService;
 
     @Test
-    void shouldRegisterPlayerAndSaveItToDatabase() {
+    void shouldRegisterPlayerAndSaveItToDatabaseWhenPlayerDoesntExist() {
         // given
-        GameName gameName = new GameName("gameName");
-        RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest("anyPlayer", "anyPassword", CORRECT_GAME_PASSWORD);
-        givenGameExists(gameName);
-        givenPasswordsMatch();
-        when(playerInGameService.addPlayerToGame(any(), any())).thenReturn(PlayerInGame.from(PlayerInGameCreator.createPlayer(gameName, new PlayerName("anyPlayer"))));
+        RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest(PLAYER_NAME, CORRECT_PLAYER_PASSWORD, CORRECT_GAME_PASSWORD);
+        givenGameExists(GAME_NAME);
+        givenGamePasswordsMatch();
+        givenPlayerDoesntExists(new PlayerName(PLAYER_NAME));
+        when(playerJoinToGameService.add(any(), any())).thenReturn(PlayerInGame.from(PlayerInGameCreator.createPlayer(GAME_NAME, new PlayerName(PLAYER_NAME)), true));
+        when(passwordChecker.encodePassword(CORRECT_PLAYER_PASSWORD)).thenReturn(CORRECT_PLAYER_PASSWORD);
 
         // when
-        playerService.joinPlayer(gameName, registerPlayerRequest);
+        playerService.joinPlayer(GAME_NAME, registerPlayerRequest);
 
         // then
         verify(playerRepository).save(any());
     }
 
     @Test
-    void shouldThrowGameNotExistsWhenGameWasntCreated() {
+    void shouldThrowPlayerExistsWhenPlayerExistsInDifferentGame() {
         // given
-        GameName gameName = new GameName("gameName");
-        RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest("anyPlayer", "anyPassword", "anyGamePassword");
-        givenGameNotExists(gameName);
+        RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest(PLAYER_NAME, CORRECT_PLAYER_PASSWORD, CORRECT_GAME_PASSWORD);
+        givenGameExists(GAME_NAME);
+        givenGamePasswordsMatch();
+        givenPlayerExists(new PlayerName(PLAYER_NAME));
+        givenPlayerPasswordsMatch();
+        when(playerInGameService.findPlayerInGame(GAME_NAME, new PlayerName(PLAYER_NAME))).thenThrow(PlayerNotFoundInGameException.class);
 
         // when & then
-        assertThrows(GameNotExistsException.class, () -> playerService.joinPlayer(gameName, registerPlayerRequest));
+        assertThrows(PlayerAlreadyExistsException.class, () -> playerService.joinPlayer(GAME_NAME, registerPlayerRequest));
+    }
+
+    @Test
+    void shouldThrowIncorrectPasswordWhenPlayerExistsButPasswordIsWrong() {
+        // given
+        RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest(PLAYER_NAME, INCORRECT_PLAYER_PASSWORD, CORRECT_GAME_PASSWORD);
+        givenGameExists(GAME_NAME);
+        givenGamePasswordsMatch();
+        givenPlayerExists(new PlayerName(PLAYER_NAME));
+        givenPlayerPasswordsDoesntMatch();
+
+        // when & then
+        assertThrows(IncorrectPasswordException.class, () -> playerService.joinPlayer(GAME_NAME, registerPlayerRequest));
+    }
+
+    @Test
+    void shouldThrowGameNotExistsWhenGameWasntCreated() {
+        // given
+        RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest(PLAYER_NAME, CORRECT_PLAYER_PASSWORD, CORRECT_GAME_PASSWORD);
+        givenGameNotExists(GAME_NAME);
+
+        // when & then
+        assertThrows(GameNotExistsException.class, () -> playerService.joinPlayer(GAME_NAME, registerPlayerRequest));
     }
 
     @Test
     void shouldThrowIncorrectGamePasswordWhenGamePasswordDidntMatchWithSaved() {
         // given
-        GameName gameName = new GameName("gameName");
-        RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest("anyPlayer", "anyPassword", "incorrectGamePassword");
-        givenGameExists(gameName);
-        givenPasswordsDoesntMatch();
+        RegisterPlayerRequest registerPlayerRequest = new RegisterPlayerRequest(PLAYER_NAME, CORRECT_PLAYER_PASSWORD, INCORRECT_GAME_PASSWORD);
+        givenGameExists(GAME_NAME);
+        givenGamePasswordsDoesntMatch();
 
         // when & then
-        assertThrows(IncorrectPasswordException.class, () -> playerService.joinPlayer(gameName, registerPlayerRequest));
+        assertThrows(IncorrectPasswordException.class, () -> playerService.joinPlayer(GAME_NAME, registerPlayerRequest));
     }
 
-    private void givenPasswordsMatch() {
-        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+    private void givenPlayerExists(PlayerName playerName) {
+        when(playerRepository.findByName(playerName)).thenReturn(of(PlayerCreator.player(playerName, CORRECT_PLAYER_PASSWORD)));
     }
 
-    private void givenPasswordsDoesntMatch() {
-        when(passwordEncoder.matches(any(), any())).thenReturn(false);
+    private void givenPlayerDoesntExists(PlayerName playerName) {
+        when(playerRepository.findByName(playerName)).thenReturn(empty());
+    }
+
+    private void givenGamePasswordsMatch() {
+        when(passwordChecker.checkPassword(any(GameEntity.class), any())).thenReturn(true);
+    }
+
+    private void givenGamePasswordsDoesntMatch() {
+        when(passwordChecker.checkPassword(any(GameEntity.class), any())).thenReturn(false);
+    }
+
+    private void givenPlayerPasswordsMatch() {
+        when(passwordChecker.checkPassword(any(PlayerEntity.class), any())).thenReturn(true);
+    }
+
+    private void givenPlayerPasswordsDoesntMatch() {
+        when(passwordChecker.checkPassword(any(PlayerEntity.class), any())).thenReturn(false);
     }
 
     private void givenGameExists(GameName gameName) {

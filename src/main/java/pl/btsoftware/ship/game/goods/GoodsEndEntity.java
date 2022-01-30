@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import pl.btsoftware.ship.game.country.Country;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "goods_end")
@@ -18,6 +19,6 @@ class GoodsEndEntity {
     @Column(nullable = false)
     private Country country;
 
-    @OneToOne
-    private GoodsEntity goods;
+    @OneToMany(mappedBy = "goodsEnd")
+    private List<GoodsEntity> goods;
 }

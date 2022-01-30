@@ -1,0 +1,32 @@
+### create game
+POST {{url}}/game
+Content-Type: application/json
+
+{
+"gameName": "{{game}}",
+"password": "{{gamePassword}}",
+"startDate": "2022-01-01"
+}
+
+### register player
+POST {{url}}/game/{{game}}/player
+Content-Type: application/json
+
+{
+  "playerName": "{{player}}",
+  "playerPassword": "{{playerPassword}}",
+  "gamePassword": "{{gamePassword}}"
+}
+
+### register player
+POST {{url}}/game/{{game}}/player/{{player}}/move
+Content-Type: application/json
+
+{
+  "x": 3,
+  "y": 3
+}
+
+### player position
+GET {{url}}/game/{{game}}/player/{{player}}
+Accept: application/json

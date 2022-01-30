@@ -1,4 +1,4 @@
-package pl.btsoftware.ship.game.move;
+package pl.btsoftware.ship.game.playerInGame;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,8 @@ public class PlayerMoveRestController {
     @PostMapping(value = "/game/{gameName}/player/{playerName}/move")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PlayerNextActionDto playerMove(@PathVariable String gameName, @PathVariable String playerName, @RequestBody PositionOnBoard positionOnBoard) {
-        log.info("Making move in game: " + gameName + " and player: " + playerName + " on " + positionOnBoard.toString());
+        log.info("==========================================");
+        log.info("Making move in game: " + gameName + " and player: " + playerName + " on " + positionOnBoard);
         return playerMoverService.movePlayer(new GameName(gameName), new PlayerName(playerName), positionOnBoard);
     }
 }

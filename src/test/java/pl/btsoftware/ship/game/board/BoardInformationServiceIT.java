@@ -10,6 +10,7 @@ import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.player.PlayerFixture;
 import pl.btsoftware.ship.registration.player.PlayerName;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -37,13 +38,13 @@ class BoardInformationServiceIT extends IntegrationTest {
         allCountriesAreMaking3RandomMoves(gameName);
 
         // when
-        ActualBoardSituation situations = boardInformationService.actualSituation(gameName);
+        List<PlayerSituation> situations = boardInformationService.actualSituation(gameName);
 
         // then
-        assertThat(situations.getPlayers()).hasSize(Country.values().length);
-        assertThat(situations.getPlayers()).extracting(PlayerSituation::getCountry).doesNotContainNull();
-        assertThat(situations.getPlayers()).extracting(PlayerSituation::getPlayerName).doesNotContainNull();
-        assertThat(situations.getPlayers()).extracting(PlayerSituation::getCoordinates).doesNotContainNull();
+        assertThat(situations).hasSize(Country.values().length);
+        assertThat(situations).extracting(PlayerSituation::getCountry).doesNotContainNull();
+        assertThat(situations).extracting(PlayerSituation::getPlayerName).doesNotContainNull();
+        assertThat(situations).extracting(PlayerSituation::getCoordinates).doesNotContainNull();
     }
 
     private void allCountriesAreMaking3RandomMoves(GameName gameName) {
@@ -61,7 +62,7 @@ class BoardInformationServiceIT extends IntegrationTest {
     }
 
     private void allCountriesJoinToGame(GameName gameName) {
-        Stream.of(Country.values()).forEach(country -> playerFixture.joinTeam(gameName, country.getName(), "anyPassword", "anyPassword"));
+        Stream.of(Country.values()).forEach(country -> playerFixture.joinPlayer(gameName, country.getName(), "anyPassword", "anyPassword"));
     }
 
     private PositionOnBoard positionOnBoard(int countryIndex, int inc) {

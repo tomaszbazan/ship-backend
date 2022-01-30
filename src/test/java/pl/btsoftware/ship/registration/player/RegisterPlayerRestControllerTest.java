@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import pl.btsoftware.ship.creators.GoodsCreator;
 import pl.btsoftware.ship.game.board.PlayerSituation;
 import pl.btsoftware.ship.game.country.Country;
-import pl.btsoftware.ship.creators.GoodsCreator;
 import pl.btsoftware.ship.game.playerInGame.PlayerInGame;
 import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.game.exception.GameNotExistsException;
@@ -15,7 +15,6 @@ import pl.btsoftware.ship.registration.player.exception.IncorrectPasswordExcepti
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,11 +37,11 @@ class RegisterPlayerRestControllerTest {
         String playerName = "playerName";
         String path = "/game/" + gameName + "/player";
         String joinRequest = "{\n" +
-                "   \"teamName\":\"" + playerName + "\",\n" +
-                "   \"teamPassword\":\"any\",\n" +
+                "   \"playerName\":\"" + playerName + "\",\n" +
+                "   \"playerPassword\":\"any\",\n" +
                 "   \"gamePassword\":\"any\"\n" +
                 "}";
-        when(playerService.joinPlayer(any(), any())).thenReturn(new PlayerInGame(new PlayerName(playerName), new GameName(gameName), Country.JAMAICA, GoodsCreator.jamaicaStartGoods()));
+        when(playerService.joinPlayer(any(), any())).thenReturn(new PlayerInGame(new PlayerName(playerName), new GameName(gameName), Country.JAMAICA, GoodsCreator.jamaicaStartGoods(), true));
 
         // when
         String response = mockMvc.perform(post(path).content(joinRequest).contentType(APPLICATION_JSON_VALUE))
@@ -64,8 +63,8 @@ class RegisterPlayerRestControllerTest {
         String playerName = "playerName";
         String path = "/game/" + gameName + "/player";
         String joinRequest = "{\n" +
-                "   \"teamName\":\"" + playerName + "\",\n" +
-                "   \"teamPassword\":\"any\",\n" +
+                "   \"playerName\":\"" + playerName + "\",\n" +
+                "   \"playerPassword\":\"any\",\n" +
                 "   \"gamePassword\":\"any\"\n" +
                 "}";
         when(playerService.joinPlayer(any(), any())).thenThrow(GameNotExistsException.class);
@@ -82,8 +81,8 @@ class RegisterPlayerRestControllerTest {
         String playerName = "playerName";
         String path = "/game/" + gameName + "/player";
         String joinRequest = "{\n" +
-                "   \"teamName\":\"" + playerName + "\",\n" +
-                "   \"teamPassword\":\"any\",\n" +
+                "   \"playerName\":\"" + playerName + "\",\n" +
+                "   \"playerPassword\":\"any\",\n" +
                 "   \"gamePassword\":\"any\"\n" +
                 "}";
         when(playerService.joinPlayer(any(), any())).thenThrow(PlayerSituation.MaximumPlayersInGameException.class);
@@ -100,8 +99,8 @@ class RegisterPlayerRestControllerTest {
         String playerName = "playerName";
         String path = "/game/" + gameName + "/player";
         String joinRequest = "{\n" +
-                "   \"teamName\":\"" + playerName + "\",\n" +
-                "   \"teamPassword\":\"any\",\n" +
+                "   \"playerName\":\"" + playerName + "\",\n" +
+                "   \"playerPassword\":\"any\",\n" +
                 "   \"gamePassword\":\"any\"\n" +
                 "}";
         when(playerService.joinPlayer(any(), any())).thenThrow(IncorrectPasswordException.class);

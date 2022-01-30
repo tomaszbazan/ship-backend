@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import pl.btsoftware.ship.game.playerInGame.PlayerInGame;
 import pl.btsoftware.ship.registration.game.GameName;
 
+import javax.validation.Valid;
+
 @RestController
 @AllArgsConstructor
 @Slf4j
@@ -16,7 +18,7 @@ public class RegisterPlayerRestController {
 
     @PostMapping(value = "/game/{gameName}/player")
     @ResponseStatus(HttpStatus.CREATED)
-    public PlayerInGame joinGame(@PathVariable String gameName, @RequestBody RegisterPlayerRequest registerPlayerRequest) {
+    public PlayerInGame joinGame(@PathVariable String gameName, @Valid @RequestBody RegisterPlayerRequest registerPlayerRequest) {
         return playerService.joinPlayer(new GameName(gameName), registerPlayerRequest);
     }
 }

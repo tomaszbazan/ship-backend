@@ -7,12 +7,13 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @NoArgsConstructor
+@AllArgsConstructor
 public class PlayerPassword {
     @NonNull
     private String password;
 
     static PlayerPassword from(RegisterPlayerRequest registerPlayerRequest, PasswordEncoder passwordEncoder) {
-        return new PlayerPassword(registerPlayerRequest.getTeamPassword(), passwordEncoder);
+        return new PlayerPassword(registerPlayerRequest.playerPassword(), passwordEncoder);
     }
 
     public PlayerPassword(@NonNull String password, PasswordEncoder passwordEncoder) {

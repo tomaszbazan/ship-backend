@@ -29,7 +29,7 @@ class GameServiceIT extends IntegrationTest {
 
         // then
         Optional<GameEntity> game = gameService.findGame(gameName);
-        assertThat(game.isPresent()).isTrue();
+        assertThat(game).isPresent();
         assertThat(passwordEncoder.matches(password, game.get().getPassword().value())).isTrue();
     }
 }

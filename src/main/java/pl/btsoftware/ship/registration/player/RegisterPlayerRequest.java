@@ -1,14 +1,10 @@
 package pl.btsoftware.ship.registration.player;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import javax.validation.constraints.NotEmpty;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-class RegisterPlayerRequest {
-    String teamName;
-    String teamPassword;
-    String gamePassword;
+record RegisterPlayerRequest(@NotEmpty String playerName, @NotEmpty String playerPassword,
+                             @NotEmpty String gamePassword) {
+    PlayerName player() {
+        return new PlayerName(playerName);
+    }
 }

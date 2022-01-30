@@ -61,4 +61,19 @@ class RegisterGameRestControllerTest {
         mockMvc.perform(post(path).content(gameRequest).contentType(APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void shouldReturnBadRequestResponseWhenAnyOfFieldsInRequestAreEmpty() throws Exception {
+        // given
+        String path = "/game";
+        String gameRequest = "{\n" +
+                "   \"gameName\":\"\",\n" +
+                "   \"password\":\"\",\n" +
+                "   \"startDate\":\"11-11-2021\"\n" +
+                "}";
+
+        // when & then
+        mockMvc.perform(post(path).content(gameRequest).contentType(APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest());
+    }
 }

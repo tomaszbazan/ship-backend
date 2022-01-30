@@ -40,7 +40,7 @@ class PlayerServiceIT extends IntegrationTest {
 
         // then
         Optional<PlayerEntity> player = playerRepository.findByName(playerInGame.getPlayerName());
-        assertThat(player.isPresent()).isTrue();
+        assertThat(player).isPresent();
         assertThat(passwordEncoder.matches(password, player.get().getPassword().value())).isTrue();
     }
 }

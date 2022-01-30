@@ -7,8 +7,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.btsoftware.ship.game.board.PositionOnBoard;
-import pl.btsoftware.ship.game.events.ActionKind;
+import pl.btsoftware.ship.game.events.NextActionKind;
 import pl.btsoftware.ship.game.events.SpecialFieldKind;
+import pl.btsoftware.ship.game.playerInGame.PlayerMoveRestController;
 import pl.btsoftware.ship.game.playerInGame.PlayerMoverService;
 import pl.btsoftware.ship.game.playerInGame.PlayerNextActionDto;
 import pl.btsoftware.ship.game.playerInGame.exception.PlayerNotFoundInGameException;
@@ -46,8 +47,7 @@ class PlayerMoveRestControllerTest {
         doThrow(GameNotExistsException.class).when(playerMoverService).movePlayer(new GameName(GAME_NAME), new PlayerName(PLAYER_NAME), new PositionOnBoard(x, y));
 
         // when & then
-        mockMvc.perform(post(path)
-                        .content(request).contentType(APPLICATION_JSON_VALUE))
+        mockMvc.perform(post(path).content(request).contentType(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound());
     }
 
@@ -92,7 +92,7 @@ class PlayerMoveRestControllerTest {
         String path = "/game/" + GAME_NAME + "/player/" + PLAYER_NAME + "/move";
         int x = 8;
         int y = 5;
-        when(playerMoverService.movePlayer(new GameName(GAME_NAME), new PlayerName(PLAYER_NAME), new PositionOnBoard(x, y))).thenReturn(new PlayerNextActionDto("any", "any", ActionKind.QUESTION, SpecialFieldKind.BOTTLE));
+        when(playerMoverService.movePlayer(new GameName(GAME_NAME), new PlayerName(PLAYER_NAME), new PositionOnBoard(x, y))).thenReturn(new PlayerNextActionDto("any", "any", NextActionKind.QUESTION, SpecialFieldKind.BOTTLE));
         String request = "{\n" +
                 "   \"x\":\"" + x + "\",\n" +
                 "   \"y\":\"" + y + "\"\n" +

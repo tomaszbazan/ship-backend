@@ -11,8 +11,10 @@ import pl.btsoftware.ship.registration.game.GameName;
 import pl.btsoftware.ship.registration.game.exception.GameNotExistsException;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static pl.btsoftware.ship.creators.PlayerInGameCreator.playersInGame;
@@ -33,19 +35,31 @@ class BoardInformationServiceTest {
         when(playerInGameService.getActualSituationOnBoard(gameName)).thenReturn(playersInGame());
 
         // when
-        ActualBoardSituation actualBoardSituation = boardInformationService.actualSituation(gameName);
+        List<PlayerSituation> actualBoardSituation = boardInformationService.actualSituation(gameName);
 
         // then
-        Assertions.assertThat(actualBoardSituation.getPlayers()).hasSize(5);
+        assertThat(actualBoardSituation).hasSize(5);
     }
 
     @Test
-    void shouldThrowGameNotFoundWhenGameNotExistsOnTryingTakeInformationAboutAllPlayersInGame() {
+    void shouldThrowGameNotFoundWhenGameNotExistsOnGeneratingBoard() {
         // given
         GameName gameName = new GameName(UUID.randomUUID().toString());
         when(playerInGameService.getActualSituationOnBoard(gameName)).thenReturn(Collections.emptyList());
 
         // when & then
-        assertThrows(GameNotExistsException.class, () -> boardInformationService.actualSituation(gameName));
+        assertThrows(GameNotExistsException.class, () -> boardInformationService.boardCreator(gameName));
+    }
+
+    @Test
+    void shouldFindCorrectWeightOnBoard() {
+        // given
+        PositionOnBoard positionOnBoard = new PositionOnBoard(1,1);
+
+        // when
+        int weight = boardInformationService.fieldMaximumWeight(positionOnBoard);
+
+        // then
+        assertThat(weight).isEqualTo(770);
     }
 }

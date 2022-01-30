@@ -3,6 +3,7 @@ package pl.btsoftware.ship.game.board;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
+@ToString
 public class PositionOnBoard implements Serializable {
     public static final int MIN_X = 1;
     public static final int MAX_X = 8;

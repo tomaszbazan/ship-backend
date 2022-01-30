@@ -17,7 +17,10 @@ public class PlayerInGameRestController {
 
     @GetMapping(value = "/game/{gameName}/player/{playerName}")
     public PlayerInGame stateOfPlayer(@PathVariable String gameName, @PathVariable String playerName) {
+        log.info("==========================================");
         log.info("Looking for player state for game: " + gameName + " and player: " + playerName);
-        return playerInGameService.findPlayerInGame(new GameName(gameName), new PlayerName(playerName));
+        PlayerInGame playerInGame = playerInGameService.findPlayerInGame(new GameName(gameName), new PlayerName(playerName));
+        playerInGame.goods.forEach(s -> log.info(s.type() + ": " + s.amount()));
+        return playerInGame;
     }
 }

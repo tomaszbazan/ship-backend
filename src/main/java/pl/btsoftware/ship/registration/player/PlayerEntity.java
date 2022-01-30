@@ -3,7 +3,6 @@ package pl.btsoftware.ship.registration.player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -27,7 +26,7 @@ public class PlayerEntity {
     @Column(nullable = false)
     private PlayerPassword password;
 
-    static PlayerEntity from(RegisterPlayerRequest request, PasswordEncoder passwordEncoder) {
-        return new PlayerEntity(PlayerId.newId(), PlayerName.from(request), PlayerPassword.from(request, passwordEncoder));
+    static PlayerEntity from(RegisterPlayerRequest request, String encodedPassword) {
+        return new PlayerEntity(PlayerId.newId(), PlayerName.from(request), new PlayerPassword(encodedPassword));
     }
 }

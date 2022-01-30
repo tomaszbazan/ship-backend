@@ -11,18 +11,12 @@ import pl.btsoftware.ship.registration.game.GameName;
 @AllArgsConstructor
 @Slf4j
 public class BoardRestController {
-
     private final BoardInformationService boardInformationService;
 
-    @GetMapping(value = "/board")
-    public Board retrieveBoard() {
-        log.info("Retrieve board");
-        return BoardCreator.create();
-    }
-
     @GetMapping(value = "/game/{gameName}/board")
-    public ActualBoardSituation situationOnBoard(@PathVariable String gameName) {
+    public Board retrieveBoard(@PathVariable String gameName) {
+        log.info("==========================================");
         log.info("Looking for situation on board for game: " + gameName);
-        return boardInformationService.actualSituation(new GameName(gameName));
+        return boardInformationService.boardCreator(new GameName(gameName));
     }
 }

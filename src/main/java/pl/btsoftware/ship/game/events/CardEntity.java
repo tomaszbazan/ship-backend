@@ -3,32 +3,31 @@ package pl.btsoftware.ship.game.events;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.btsoftware.ship.game.playerInGame.PlayerInGameEntity;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
-@Table(name = "event")
+@Table(name = "card")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Event {
-    @EmbeddedId
-    private FieldId id;
+public class CardEntity {
+    @Id
+    UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SpecialFieldKind type;
-
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String description;
+    private CardType type;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ActionKind action;
+    private Conjunction conjunction;
 
-    @Column(nullable = false)
-    private boolean removable;
+    @ManyToOne
+    private PlayerInGameEntity playerInGame;
+
+    @ManyToOne
+    private EventRewardEntity eventReward;
 }

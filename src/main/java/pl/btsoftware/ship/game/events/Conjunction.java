@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum ActionKind {
-    QUESTION("question");
+public enum Conjunction {
+    AND("AND"), OR("OR");
 
-    private final String kind;
+    private final String conjunction;
 
     @JsonValue
-    public String getKind() {
-        return kind;
+    public String getConjunction() {
+        return conjunction;
     }
 }

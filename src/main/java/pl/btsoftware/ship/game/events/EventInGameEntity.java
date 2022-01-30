@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class EventInGameEntity {
+class EventInGameEntity {
     @EmbeddedId
     private FieldId id;
 
@@ -30,13 +30,33 @@ public class EventInGameEntity {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ActionKind action;
+    @Column
+    private NextActionKind nextAction;
+
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private Conjunction conjunction;
+//
+//    @Column(nullable = false)
+//    private boolean reward;
+//
+//    @OneToMany(mappedBy = "eventInGame", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinTable(name = "event_reward",
+//            joinColumns = {@JoinColumn(name = "x"), @JoinColumn(name = "y")},
+//            inverseJoinColumns = @JoinColumn(name = "card_id"))
+//    private List<CardEntity> cards = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "eventInGame", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinTable(name = "event_reward",
+//            joinColumns = {@JoinColumn(name = "x"), @JoinColumn(name = "y")},
+//            inverseJoinColumns = @JoinColumn(name = "goods_id"))
+//    private List<GoodsEntity> goods = new ArrayList<>();
 
     @Column(nullable = false)
     private boolean removable;
 
-    static EventInGameEntity from(Event event, GameEntity game) {
-        return new EventInGameEntity(event.getId(), game, event.getType(), event.getTitle(), event.getDescription(), event.getAction(), event.isRemovable());
+    static EventInGameEntity from(EventEntity event, GameEntity game) {
+//        return new EventInGameEntity(event.getId(), game, event.getType(), event.getTitle(), event.getDescription(), event.getNextAction(), event.getConjunction(), event.isReward(), event.getCards(), event.getGoods(), event.isRemovable());
+        return new EventInGameEntity(event.getId(), game, event.getType(), event.getTitle(), event.getDescription(), event.getNextAction(), event.isRemovable());
     }
 }

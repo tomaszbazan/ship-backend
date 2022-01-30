@@ -8,19 +8,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import pl.btsoftware.ship.game.country.Country;
 import pl.btsoftware.ship.game.playerInGame.PlayerInGameEntity;
+import pl.btsoftware.ship.registration.player.PlayerName;
 
 @Data
 @AllArgsConstructor
 @Builder
 public class PlayerSituation {
     @JsonProperty("player_name")
-    private String playerName;
+    private PlayerName playerName;
     private Country country;
     private PositionOnBoard coordinates;
 
     public static PlayerSituation from(PlayerInGameEntity playerInGame) {
         return PlayerSituation.builder()
-                .playerName(playerInGame.getPlayerName().getName())
+                .playerName(playerInGame.getPlayerName())
                 .country(playerInGame.getCountry())
                 .coordinates(createCoordinatesIfNonOfThemAreNull(playerInGame))
                 .build();

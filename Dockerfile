@@ -1,4 +1,4 @@
-FROM openjdk:16-slim
+FROM openjdk:17-slim
 
 RUN mkdir /app
 COPY /target/*.jar /app/app.jar

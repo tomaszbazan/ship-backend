@@ -49,4 +49,6 @@ class PositionOnBoardTest {
         // when & then
         assertThrows(PlayerSituation.IncorrectPositionException.class, () -> new PositionOnBoard(x, y));
     }
+
+
 }

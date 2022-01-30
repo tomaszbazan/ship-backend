@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @AllArgsConstructor
 @Slf4j
@@ -14,7 +16,7 @@ public class RegisterGameRestController {
 
     @PostMapping(value = "/game")
     @ResponseStatus(HttpStatus.CREATED)
-    public GameName registerGame(@RequestBody RegisterGameRequest gameRegisterRequest) {
+    public GameName registerGame(@Valid @RequestBody RegisterGameRequest gameRegisterRequest) {
         return gameService.register(gameRegisterRequest);
     }
 }
