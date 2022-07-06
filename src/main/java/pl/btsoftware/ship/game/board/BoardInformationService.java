@@ -2,40 +2,26 @@ package pl.btsoftware.ship.game.board;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.btsoftware.ship.game.events.EventField;
+import pl.btsoftware.ship.game.events.EventFieldDto;
 import pl.btsoftware.ship.game.events.EventsService;
-import pl.btsoftware.ship.game.playerInGame.PlayerInGameService;
-import pl.btsoftware.ship.registration.game.GameName;
-import pl.btsoftware.ship.registration.game.exception.GameNotExistsException;
+import pl.btsoftware.ship.game.playerPosition.PlayerPositionService;
+import pl.btsoftware.ship.game.playerPosition.PlayerPositionDto;
+import pl.btsoftware.ship.game.state.GameStateService;
+import pl.btsoftware.ship.shared.GameName;
+import pl.btsoftware.ship.shared.PositionOnBoard;
 
-import java.util.Collections;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 @Service
 @AllArgsConstructor
 public class BoardInformationService {
-    private final PlayerInGameService playerInGameService;
+    private final PlayerPositionService playerPositionService;
     private final EventsService eventsService;
+    private final GameStateService stateService;
 
     Board boardCreator(GameName gameName) {
-        List<PlayerSituation> actualBoardSituation = actualSituation(gameName);
-        List<EventField> eventFields = eventsService.findAllInGame(gameName);
-        return BoardCreator.create(actualBoardSituation, eventFields);
-    }
-
-    public int fieldMaximumWeight(PositionOnBoard positionOnBoard) {
-        Board board = BoardCreator.create(emptyList(), emptyList());
-        return board.fieldWeight(positionOnBoard);
-    }
-
-    List<PlayerSituation> actualSituation(GameName gameName) {
-        List<PlayerSituation> actualPlayersSituation = playerInGameService.getActualSituationOnBoard(gameName);
-        if (actualPlayersSituation.isEmpty()) {
-            throw new GameNotExistsException(gameName);
-        }
-
-        return actualPlayersSituation;
+        List<PlayerPositionDto> actualBoardSituation = playerPositionService.positionOfAllPlayers(gameName);
+        List<EventFieldDto> eventFields = eventsService.findAllInGame(gameName);
+        return BoardCreator.create(actualBoardSituation, eventFields, stateService.state(gameName));
     }
 }

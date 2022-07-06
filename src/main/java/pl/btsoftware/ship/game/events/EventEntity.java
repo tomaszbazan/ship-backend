@@ -3,18 +3,15 @@ package pl.btsoftware.ship.game.events;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.btsoftware.ship.game.goods.GoodsEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "event")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class EventEntity {
+class EventEntity {
     @EmbeddedId
     private FieldId id;
 

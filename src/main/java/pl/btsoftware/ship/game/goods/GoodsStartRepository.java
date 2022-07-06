@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 interface GoodsStartRepository extends JpaRepository<GoodsStartEntity, UUID> {
-    GoodsStartEntity findFirstByCountry(Country country);
+    List<GoodsStartEntity> findAllByCountry(Country country);
 }

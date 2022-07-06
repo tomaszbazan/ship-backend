@@ -15,7 +15,7 @@ public enum Country {
 
     public static Country from(String text) {
         for (Country b : Country.values()) {
-            if (b.getName().equals(text)) {
+            if (b.getName().equalsIgnoreCase(text)) {
                 return b;
             }
         }

@@ -8,8 +8,8 @@ import java.util.List;
 
 record Field(int x, int y, @JsonProperty("max_weight") int maxWeight, SpecialField event, List<Player> players,
              @JsonProperty("is_start_point") boolean isStartPoint, @JsonProperty("is_end_point") boolean isEndPoint) {
-    static record Player(@JsonProperty("name") String playerName, Country country) {
+    record Player(@JsonProperty("name") String playerName, Country country) {
     }
-    static record SpecialField(SpecialFieldKind kind) {
+    record SpecialField(SpecialFieldKind kind) {
     }
 }

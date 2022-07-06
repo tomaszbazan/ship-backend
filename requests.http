@@ -3,30 +3,43 @@ POST {{url}}/game
 Content-Type: application/json
 
 {
-"gameName": "{{game}}",
+"game": "{{game}}",
 "password": "{{gamePassword}}",
-"startDate": "2022-01-01"
+"roundTime": 5
 }
+
+### start game
+POST {{url}}/game/{{game}}/start
+Content-Type: application/json
 
 ### register player
 POST {{url}}/game/{{game}}/player
 Content-Type: application/json
 
 {
-  "playerName": "{{player}}",
+  "player": "{{player}}",
   "playerPassword": "{{playerPassword}}",
   "gamePassword": "{{gamePassword}}"
 }
 
-### register player
+### register player move
 POST {{url}}/game/{{game}}/player/{{player}}/move
 Content-Type: application/json
 
 {
-  "x": 3,
-  "y": 3
+  "x": 2,
+  "y": 2
 }
 
-### player position
+### get player situation
 GET {{url}}/game/{{game}}/player/{{player}}
 Accept: application/json
+
+### accept bottle
+POST {{url}}/game/{{game}}/player/{{player}}/event?type=BOTTLE
+Accept: application/json
+
+{
+  "type": "BOTTLE",
+  "accept": true
+}

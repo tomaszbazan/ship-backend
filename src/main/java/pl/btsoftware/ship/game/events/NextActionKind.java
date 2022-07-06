@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum NextActionKind {
-    QUESTION("question"), DICE("dice"), NEXT_MOVE("next_move"), VISION("vision");
+    QUESTION("question"), DICE("dice"), NEXT_MOVE("next_move"), VISION("vision"), SICK("sick");
 
     private final String action;
 

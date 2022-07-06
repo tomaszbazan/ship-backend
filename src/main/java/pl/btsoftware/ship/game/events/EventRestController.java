@@ -3,27 +3,29 @@ package pl.btsoftware.ship.game.events;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import pl.btsoftware.ship.game.events.exception.SpecialFieldTypeNotFoundException;
-import pl.btsoftware.ship.game.playerInGame.PlayerNextActionDto;
-import pl.btsoftware.ship.registration.game.GameName;
-import pl.btsoftware.ship.registration.player.PlayerName;
+import pl.btsoftware.ship.shared.GameName;
+import pl.btsoftware.ship.shared.PlayerName;
 
 @RestController
 @AllArgsConstructor
 @Slf4j
-public class EventRestController {
-    private final BottleService bottleService;
+class EventRestController {
+    private final EventSelector eventSelector;
 
-    @GetMapping(value = "/game/{gameName}/player/{playerName}/event")
+    @PostMapping(value = "/game/{game}/player/{player}/event", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PlayerNextActionDto applyEvent(@PathVariable String gameName, @PathVariable String playerName, @RequestParam SpecialFieldKind type) {
+    EventsService.EventDescription applyEvent(@PathVariable String game, @PathVariable String player, @RequestBody EventResponse response) {
         log.info("==========================================");
-        log.info("Getting event in game: " + gameName + " and player: " + playerName);
-        if (type.equals(SpecialFieldKind.BOTTLE)) {
-            return bottleService.accept(new GameName(gameName), new PlayerName(playerName));
+        log.info("Getting event in game: " + game + " and player: " + player);
+        if (response.accepted) {
+            return eventSelector.accept(response.type, new GameName(game), new PlayerName(player));
         } else {
-            throw new SpecialFieldTypeNotFoundException();
+            eventSelector.decline(response.type, new GameName(game), new PlayerName(player));
+            return null;
         }
+    }
+    record EventResponse(SpecialFieldKind type, boolean accepted) {
     }
 }

@@ -3,7 +3,8 @@ package pl.btsoftware.ship.game.events;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import pl.btsoftware.ship.registration.game.GameEntity;
+import pl.btsoftware.ship.shared.GameName;
+import pl.btsoftware.ship.shared.PositionOnBoard;
 
 import javax.persistence.*;
 
@@ -14,10 +15,7 @@ import javax.persistence.*;
 @Getter
 class EventInGameEntity {
     @EmbeddedId
-    private FieldId id;
-
-    @OneToOne
-    private GameEntity game;
+    private FieldGameId id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -55,8 +53,12 @@ class EventInGameEntity {
     @Column(nullable = false)
     private boolean removable;
 
-    static EventInGameEntity from(EventEntity event, GameEntity game) {
+    static EventInGameEntity from(EventEntity event, GameName game) {
 //        return new EventInGameEntity(event.getId(), game, event.getType(), event.getTitle(), event.getDescription(), event.getNextAction(), event.getConjunction(), event.isReward(), event.getCards(), event.getGoods(), event.isRemovable());
-        return new EventInGameEntity(event.getId(), game, event.getType(), event.getTitle(), event.getDescription(), event.getNextAction(), event.isRemovable());
+        return new EventInGameEntity(FieldGameId.from(event.getId(), game), event.getType(), event.getTitle(), event.getDescription(), event.getNextAction(), event.isRemovable());
+    }
+
+    PositionOnBoard mapId() {
+        return new PositionOnBoard(id.getX(), id.getY());
     }
 }

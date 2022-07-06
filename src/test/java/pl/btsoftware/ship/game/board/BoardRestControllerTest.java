@@ -6,17 +6,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.btsoftware.ship.game.country.Country;
-import pl.btsoftware.ship.game.events.EventField;
-import pl.btsoftware.ship.game.events.FieldId;
+import pl.btsoftware.ship.game.events.EventFieldDto;
 import pl.btsoftware.ship.game.events.SpecialFieldKind;
-import pl.btsoftware.ship.registration.game.GameName;
-import pl.btsoftware.ship.registration.game.exception.GameNotExistsException;
-import pl.btsoftware.ship.registration.player.PlayerName;
+import pl.btsoftware.ship.game.playerPosition.PlayerPositionDto;
+import pl.btsoftware.ship.registration.exception.GameNotExistsException;
+import pl.btsoftware.ship.shared.PlayerName;
+import pl.btsoftware.ship.shared.PositionOnBoard;
+import pl.btsoftware.ship.shared.Round;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,6 +28,7 @@ import static pl.btsoftware.ship.JsonMapper.readPath;
 class BoardRestControllerTest {
     private static final String FIRST_PLAYER_NAME = "firstPlayer";
     private static final String SECOND_PLAYER_NAME = "secondPlayer";
+    private static final Round ROUND = Round.ROUND_1_MOVE;
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,7 +41,7 @@ class BoardRestControllerTest {
         // given
         String gameName = "anyName";
         String path = "/game/" + gameName + "/board";
-        when(boardInformationService.boardCreator(new GameName(gameName))).thenReturn(BoardCreator.create(anySituationOnBoard(), anyEvents()));
+        when(boardInformationService.boardCreator(any())).thenReturn(BoardCreator.create(anySituationOnBoard(), anyEvents(), ROUND));
 
         // when
         String response = mockMvc.perform(get(path))
@@ -46,6 +49,7 @@ class BoardRestControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         // then
+        checkRound(response);
         checkPlayers(response);
         checkStartingPoints(response);
         checkEndingPoints(response);
@@ -57,29 +61,33 @@ class BoardRestControllerTest {
     void shouldReturnNotFoundWhenGameNotExists() throws Exception {
         // given
         String gameName = "anyName";
-        String path = "/game/" + gameName;
-        when(boardInformationService.actualSituation(new GameName(gameName))).thenThrow(GameNotExistsException.class);
+        String path = "/game/" + gameName + "/board";
+        when(boardInformationService.boardCreator(any())).thenThrow(GameNotExistsException.class);
 
         // when & then
         mockMvc.perform(get(path)).andExpect(status().isNotFound());
     }
 
-    private List<EventField> anyEvents() {
-        List<EventField> events = new ArrayList<>();
-        events.add(new EventField(new FieldId(2, 2), SpecialFieldKind.BOTTLE));
-        events.add(new EventField(new FieldId(4, 2), SpecialFieldKind.ADVENTURE));
-        events.add(new EventField(new FieldId(3, 4), SpecialFieldKind.TREASURE));
+    private List<EventFieldDto> anyEvents() {
+        List<EventFieldDto> events = new ArrayList<>();
+        events.add(new EventFieldDto(new PositionOnBoard(2, 2), SpecialFieldKind.BOTTLE));
+        events.add(new EventFieldDto(new PositionOnBoard(4, 2), SpecialFieldKind.ADVENTURE));
+        events.add(new EventFieldDto(new PositionOnBoard(3, 4), SpecialFieldKind.TREASURE));
 
         return events;
     }
 
-    private List<PlayerSituation> anySituationOnBoard() {
-        List<PlayerSituation> playerSituations = new ArrayList<>();
-        playerSituations.add(PlayerSituation.builder().playerName(new PlayerName(FIRST_PLAYER_NAME)).country(Country.JAMAICA).coordinates(new PositionOnBoard(1, 1)).build());
-        playerSituations.add(PlayerSituation.builder().playerName(new PlayerName(SECOND_PLAYER_NAME)).country(Country.HAITI).coordinates(new PositionOnBoard(2, 5)).build());
-        playerSituations.add(PlayerSituation.builder().playerName(new PlayerName("thirdPlayer")).country(Country.CUBA).build());
+    private List<PlayerPositionDto> anySituationOnBoard() {
+        List<PlayerPositionDto> playerPositionDtos = new ArrayList<>();
+        playerPositionDtos.add(new PlayerPositionDto(new PlayerName(FIRST_PLAYER_NAME), Country.JAMAICA, new PositionOnBoard(1, 1)));
+        playerPositionDtos.add(new PlayerPositionDto(new PlayerName(SECOND_PLAYER_NAME), Country.HAITI, new PositionOnBoard(2, 5)));
+        playerPositionDtos.add(new PlayerPositionDto(new PlayerName("thirdPlayer"), Country.CUBA));
 
-        return playerSituations;
+        return playerPositionDtos;
+    }
+
+    private void checkRound(String response) {
+        assertThat(readPath(response, "$.round")).isEqualTo(ROUND.toString());
     }
 
     private void checkPlayers(String response) {

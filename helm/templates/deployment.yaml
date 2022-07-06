@@ -33,3 +33,5 @@ spec:
           env:
             - name: "SPRING_PROFILES_ACTIVE"
               value: {{ .Values.springprofile }}
+            - name: "SPRING_DATASOURCE_PASSWORD"
+              value: { { .Values.database.password } }

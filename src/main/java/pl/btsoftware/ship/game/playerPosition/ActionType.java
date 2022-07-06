@@ -1,0 +1,5 @@
+package pl.btsoftware.ship.game.playerPosition;
+
+public enum ActionType {
+    JOIN, MOVE, BOTTLE, BOTTLE_ACCEPTED, BOTTLE_DECLINED, ADVENTURE, ADVENTURE_ACCEPTED, TREASURE, TREASURE_ACCEPTED, TREASURE_DECLINED
+}

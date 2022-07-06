@@ -1,15 +1,18 @@
 package pl.btsoftware.ship.creators;
 
-import pl.btsoftware.ship.game.events.CardEntity;
-import pl.btsoftware.ship.game.events.CardType;
-import pl.btsoftware.ship.game.events.Conjunction;
+
+import pl.btsoftware.ship.game.playerPosition.CardsType;
+import pl.btsoftware.ship.game.playerPosition.PlayerPositionSnapshot;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 public class CardsCreator {
-    public static List<CardEntity> cardsEntity(CardType cardType) {
-        return Collections.singletonList(new CardEntity(UUID.randomUUID(), cardType, Conjunction.AND, null, null));
+    public static List<PlayerPositionSnapshot.CardsDto> cards() {
+        return Collections.singletonList(new PlayerPositionSnapshot.CardsDto(CardsType.SNAIL.getName(), 1));
+    }
+
+    public static List<PlayerPositionSnapshot.CardsDto> empty() {
+        return Collections.emptyList();
     }
 }
