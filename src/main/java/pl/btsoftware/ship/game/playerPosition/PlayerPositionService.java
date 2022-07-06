@@ -47,10 +47,16 @@ public class PlayerPositionService {
     @Transactional
     public void joinPlayer(GameName game, PlayerName player, Country country, List<GoodsDto> startGoods) {
         PlayerPosition playerPosition = repository.save(PlayerPosition.join(game, player, country));
-        goodsRepository.saveAll(startGoods.stream().map(goods -> PlayerGoodsEntity.from(goods, playerPosition)).toList());
+        storeGoods(playerPosition, startGoods);
     }
 
-    void moveOn(GameName game, PlayerName player, PositionOnBoard newPosition) {
+    private void storeGoods(PlayerPosition playerPosition, List<GoodsDto> startGoods) {
+        List<PlayerGoodsEntity> storedGoods = goodsRepository.saveAll(startGoods.stream().map(goods -> PlayerGoodsEntity.from(goods, playerPosition)).toList());
+        playerPosition.setGoods(storedGoods);
+    }
+
+    @Transactional
+    public void moveOn(GameName game, PlayerName player, PositionOnBoard newPosition) {
         PlayerPosition lastKnownPosition = findLastKnownPosition(game, player);
         MoveCorrectnessValidator.canMoveOn(lastKnownPosition.getPositionOnBoard(), newPosition, lastKnownPosition.shipWeight());
         saveAction(game, player, newPosition, ActionType.MOVE);
@@ -68,11 +74,12 @@ public class PlayerPositionService {
         return noOfPlayersInRound == noOfPlayersInGame;
     }
 
+    @Transactional
     public void addReward(GameName game, PlayerName player, EventRewardSnapshot rewardSnapshot) {
         PlayerPosition lastKnownPosition = findLastKnownPosition(game, player);
-        PlayerPosition playerPosition = repository.save(PlayerPosition.action(lastKnownPosition, lastKnownPosition.getPositionOnBoard(), gameStateService.state(game), ActionType.MOVE));
         EventRewardSnapshot reward = rewardSnapshot.addGoods(lastKnownPosition.goodsAsMap());
-        goodsRepository.saveAll(reward.goods().entrySet().stream().map(e -> PlayerGoodsEntity.from(new GoodsDto(e.getKey(), e.getValue()), playerPosition)).toList());
+        PlayerPosition playerPosition = repository.save(PlayerPosition.action(lastKnownPosition, lastKnownPosition.getPositionOnBoard(), gameStateService.state(game), ActionType.MOVE));
+        storeGoods(playerPosition, reward.goods().entrySet().stream().map(e -> new GoodsDto(e.getKey(), e.getValue())).collect(Collectors.toList()));
     }
 
     private PlayerPosition findLastKnownPosition(GameName game, PlayerName player) {

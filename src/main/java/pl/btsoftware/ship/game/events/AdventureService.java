@@ -3,6 +3,7 @@ package pl.btsoftware.ship.game.events;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.btsoftware.ship.game.events.exception.EventNotFoundException;
 import pl.btsoftware.ship.game.playerPosition.ActionType;
 import pl.btsoftware.ship.game.playerPosition.PlayerActionService;
@@ -19,6 +20,7 @@ class AdventureService {
     private final PlayerPositionService playerPositionService;
     private final PlayerActionService playerActionService;
 
+    @Transactional
     EventsService.EventDescription accept(GameName game, PlayerName player) {
         PlayerPositionSnapshot playerPosition = playerPositionService.get(game, player);
         if (playerPosition.lastAction() != ActionType.ADVENTURE) {

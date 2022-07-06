@@ -4,8 +4,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import pl.btsoftware.ship.game.country.Country;
 import pl.btsoftware.ship.game.goods.GoodsDto;
 import pl.btsoftware.ship.game.goods.GoodsType;
@@ -49,11 +47,9 @@ class PlayerPosition {
     private PositionOnBoard positionOnBoard;
 
     @OneToMany(mappedBy = "playerPosition")
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<PlayerGoodsEntity> goods = new ArrayList<>();
 
     @OneToMany(mappedBy = "playerPosition")
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<PlayerCardsEntity> cards = new ArrayList<>();
 
     @Column(nullable = false)
@@ -101,7 +97,7 @@ class PlayerPosition {
     }
 
     Integer shipWeight() {
-        return goods.stream().filter(PlayerGoodsEntity::isNotGold).mapToInt(PlayerGoodsEntity::getAmount).sum();
+        return getGoods().stream().filter(PlayerGoodsEntity::isNotGold).mapToInt(PlayerGoodsEntity::getAmount).sum();
     }
 
     Map<GoodsType, Integer> goodsAsMap() {
@@ -109,11 +105,11 @@ class PlayerPosition {
     }
 
     List<PlayerGoodsEntity> copyGoods(PlayerPosition playerPosition) {
-        return goods.stream().map(g -> PlayerGoodsEntity.copy(g, playerPosition)).toList();
+        return getGoods().stream().map(g -> PlayerGoodsEntity.copy(g, playerPosition)).toList();
     }
 
     List<GoodsDto> goodsDtos() {
-        return goods.stream().map(g -> new GoodsDto(g.getType(), g.getAmount())).toList();
+        return getGoods().stream().map(g -> new GoodsDto(g.getType(), g.getAmount())).toList();
     }
 
     boolean firstMove() {
